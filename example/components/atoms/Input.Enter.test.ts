@@ -1,0 +1,50 @@
+import { screen, waitFor } from "testing-library__dom";
+import { fixture } from "@open-wc/testing-helpers";
+import userEvent from "@testing-library/user-event";
+import { html } from "lit-html";
+import { pureLit } from "pure-lit";
+import { InputTriggerBehaviour } from "..";
+import { Hormone, defineHormone, useReceptor } from "../../../src";
+
+import "./Input";
+import { LitElement } from "lit-element";
+import { FormElementHoromoneValue } from "../types";
+
+describe("Input", () => {
+  describe("When triggered on enter", () => {
+    let hormoneToReleaseInputValue: Hormone<FormElementHoromoneValue>;
+
+    beforeEach(async () => {
+      const form = "form";
+      hormoneToReleaseInputValue = defineHormone<FormElementHoromoneValue>(
+        "test/inputValueWithEnter",
+        { defaultValue: { form, value: "", name: "" } }
+      );
+
+      pureLit("trigger-on-enter", (el: LitElement) => {
+        const result = useReceptor(el, hormoneToReleaseInputValue);
+        return html`<div data-testid="result">${result?.value}</div>
+          <component-atom-input
+            name="name"
+            label="label}"
+            placeholder="placeholder}"
+            form="${form}"
+            clear
+            .triggers=${[InputTriggerBehaviour.OnEnter]}
+            .release=${hormoneToReleaseInputValue}
+          ></component-atom-input>`;
+      });
+      await fixture("<trigger-on-enter></trigger-on-enter>");
+      await userEvent.type(screen.getByRole("textbox"), "hello world{enter}");
+    });
+
+    xit("releases the specified horomone", async () => {
+      await waitFor(() => screen.getByText("hello world"));
+      expect(screen.getByTestId("result").innerHTML).toContain("hello world");
+    });
+
+    it("clears the textbox", async () => {
+      expect((screen.getByRole("textbox") as any).value).toContain("");
+    });
+  });
+});

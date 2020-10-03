@@ -1,0 +1,321 @@
+<html>
+<style type="text/css">
+/* Background */ .chroma { color: #f8f8f2; background-color: #272822 }
+/* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
+/* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
+/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #3c3d38 }
+/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Keyword */ .chroma .k { color: #66d9ef }
+/* KeywordConstant */ .chroma .kc { color: #66d9ef }
+/* KeywordDeclaration */ .chroma .kd { color: #66d9ef }
+/* KeywordNamespace */ .chroma .kn { color: #f92672 }
+/* KeywordPseudo */ .chroma .kp { color: #66d9ef }
+/* KeywordReserved */ .chroma .kr { color: #66d9ef }
+/* KeywordType */ .chroma .kt { color: #66d9ef }
+/* NameAttribute */ .chroma .na { color: #a6e22e }
+/* NameClass */ .chroma .nc { color: #a6e22e }
+/* NameConstant */ .chroma .no { color: #66d9ef }
+/* NameDecorator */ .chroma .nd { color: #a6e22e }
+/* NameException */ .chroma .ne { color: #a6e22e }
+/* NameFunction */ .chroma .nf { color: #a6e22e }
+/* NameOther */ .chroma .nx { color: #a6e22e }
+/* NameTag */ .chroma .nt { color: #f92672 }
+/* Literal */ .chroma .l { color: #ae81ff }
+/* LiteralDate */ .chroma .ld { color: #e6db74 }
+/* LiteralString */ .chroma .s { color: #e6db74 }
+/* LiteralStringAffix */ .chroma .sa { color: #e6db74 }
+/* LiteralStringBacktick */ .chroma .sb { color: #e6db74 }
+/* LiteralStringChar */ .chroma .sc { color: #e6db74 }
+/* LiteralStringDelimiter */ .chroma .dl { color: #e6db74 }
+/* LiteralStringDoc */ .chroma .sd { color: #e6db74 }
+/* LiteralStringDouble */ .chroma .s2 { color: #e6db74 }
+/* LiteralStringEscape */ .chroma .se { color: #ae81ff }
+/* LiteralStringHeredoc */ .chroma .sh { color: #e6db74 }
+/* LiteralStringInterpol */ .chroma .si { color: #e6db74 }
+/* LiteralStringOther */ .chroma .sx { color: #e6db74 }
+/* LiteralStringRegex */ .chroma .sr { color: #e6db74 }
+/* LiteralStringSingle */ .chroma .s1 { color: #e6db74 }
+/* LiteralStringSymbol */ .chroma .ss { color: #e6db74 }
+/* LiteralNumber */ .chroma .m { color: #ae81ff }
+/* LiteralNumberBin */ .chroma .mb { color: #ae81ff }
+/* LiteralNumberFloat */ .chroma .mf { color: #ae81ff }
+/* LiteralNumberHex */ .chroma .mh { color: #ae81ff }
+/* LiteralNumberInteger */ .chroma .mi { color: #ae81ff }
+/* LiteralNumberIntegerLong */ .chroma .il { color: #ae81ff }
+/* LiteralNumberOct */ .chroma .mo { color: #ae81ff }
+/* Operator */ .chroma .o { color: #f92672 }
+/* OperatorWord */ .chroma .ow { color: #f92672 }
+/* Comment */ .chroma .c { color: #75715e }
+/* CommentHashbang */ .chroma .ch { color: #75715e }
+/* CommentMultiline */ .chroma .cm { color: #75715e }
+/* CommentSingle */ .chroma .c1 { color: #75715e }
+/* CommentSpecial */ .chroma .cs { color: #75715e }
+/* CommentPreproc */ .chroma .cp { color: #75715e }
+/* CommentPreprocFile */ .chroma .cpf { color: #75715e }
+/* GenericDeleted */ .chroma .gd { color: #f92672 }
+/* GenericEmph */ .chroma .ge { font-style: italic }
+/* GenericInserted */ .chroma .gi { color: #a6e22e }
+/* GenericStrong */ .chroma .gs { font-weight: bold }
+/* GenericSubheading */ .chroma .gu { color: #75715e }
+body { color: #f8f8f2; background-color: #272822; }
+</style><body class="chroma">
+<pre class="chroma"><span class="kr">import</span> <span class="p">{</span> <span class="nx">useState</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element-state-decoupler&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">css</span><span class="p">,</span> <span class="nx">html</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">LitElementWithProps</span><span class="p">,</span> <span class="nx">pureLit</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;pure-lit&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">defineHormone</span><span class="p">,</span> <span class="nx">useReceptor</span><span class="p">,</span> <span class="nx">releaseHormone</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span>
+  <span class="nx">calculatedField</span><span class="p">,</span>
+  <span class="nx">Cell</span><span class="p">,</span>
+  <span class="nx">hasReference</span><span class="p">,</span>
+  <span class="nx">isEqual</span><span class="p">,</span>
+  <span class="nx">isFormula</span><span class="p">,</span>
+  <span class="nx">isString</span><span class="p">,</span>
+  <span class="nx">parseField</span><span class="p">,</span>
+<span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./spreadsheet-utils&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">resetFormElements</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./css&#34;</span><span class="p">;</span>
+
+<span class="kr">const</span> <span class="nx">cellSet</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;(</span><span class="s2">&#34;cell/set&#34;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">row</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nx">readOnce</span>: <span class="kt">true</span><span class="p">,</span>
+<span class="p">});</span>
+<span class="kr">const</span> <span class="nx">cellChanged</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;(</span><span class="s2">&#34;cell/changed&#34;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">row</span><span class="o">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="nx">readOnce</span>: <span class="kt">true</span><span class="p">,</span>
+<span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">cellRequest</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;(</span><span class="s2">&#34;cell/request&#34;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">readOnce</span>: <span class="kt">true</span> <span class="p">});</span>
+
+<span class="kr">const</span> <span class="nx">inputValue</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span>: <span class="kt">InputEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="kr">as</span> <span class="nx">HTMLInputElement</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+
+<span class="nx">pureLit</span><span class="p">(</span>
+  <span class="s2">&#34;cell-element&#34;</span><span class="p">,</span>
+  <span class="p">(</span><span class="nx">element</span>: <span class="kt">LitElementWithProps</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">element</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">getState</span>: <span class="kt">getValue</span><span class="p">,</span> <span class="nx">publish</span>: <span class="kt">setValue</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">getState</span>: <span class="kt">isFocused</span><span class="p">,</span> <span class="nx">publish</span>: <span class="kt">setFocused</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span>
+      <span class="nx">element</span><span class="p">,</span>
+      <span class="kc">false</span>
+    <span class="p">);</span>
+    <span class="kr">const</span> <span class="p">{</span> <span class="nx">getState</span>: <span class="kt">getReferences</span><span class="p">,</span> <span class="nx">publish</span>: <span class="kt">setReference</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="err">[]</span><span class="p">&gt;(</span>
+      <span class="nx">element</span><span class="p">,</span>
+      <span class="p">[]</span>
+    <span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">displayValue</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span>
+      <span class="nx">isFormula</span><span class="p">(</span><span class="nx">getValue</span><span class="p">())</span>
+        <span class="o">?</span> <span class="nx">calculatedField</span><span class="p">(</span><span class="nx">getValue</span><span class="p">(),</span> <span class="nx">getReferences</span><span class="p">())</span>
+        <span class="o">:</span> <span class="nx">getValue</span><span class="p">();</span>
+
+    <span class="nx">collectChanges</span><span class="p">(</span>
+      <span class="nx">element</span><span class="p">,</span>
+      <span class="nx">getValue</span><span class="p">,</span>
+      <span class="nx">displayValue</span><span class="p">,</span>
+      <span class="nx">setReference</span><span class="p">,</span>
+      <span class="nx">getReferences</span>
+    <span class="p">);</span>
+    <span class="nx">notifyRequests</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">displayValue</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span><span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">isSet</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">cellSet</span><span class="p">,</span> <span class="p">(</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="p">{</span> <span class="nx">column</span>: <span class="kt">element.column</span><span class="p">,</span> <span class="nx">row</span>: <span class="kt">element.row</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span> <span class="p">})</span>
+    <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isSet</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">setValue</span><span class="p">(</span><span class="nx">isSet</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+      <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellChanged</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">value</span>: <span class="kt">displayValue</span><span class="p">(),</span>
+        <span class="nx">row</span><span class="p">,</span>
+        <span class="nx">column</span><span class="p">,</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">html</span><span class="sb">`&lt;input
+</span><span class="sb">      type=&#34;text&#34;
+</span><span class="sb">      class=&#34;</span><span class="si">${</span><span class="nx">isFormula</span><span class="p">(</span><span class="nx">getValue</span><span class="p">())</span> <span class="o">?</span> <span class="s2">&#34;formula&#34;</span> <span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="si">}</span><span class="sb">&#34;
+</span><span class="sb">      @focus=</span><span class="si">${</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">setFocused</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="si">}</span><span class="sb">
+</span><span class="sb">      @blur=</span><span class="si">${</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">setFocused</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span><span class="si">}</span><span class="sb">
+</span><span class="sb">      @input=</span><span class="si">${</span><span class="p">(</span><span class="nx">e</span>: <span class="kt">InputEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">setValue</span><span class="p">(</span><span class="nx">inputValue</span><span class="p">(</span><span class="nx">e</span><span class="p">));</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isFormula</span><span class="p">(</span><span class="nx">inputValue</span><span class="p">(</span><span class="nx">e</span><span class="p">)))</span> <span class="p">{</span>
+          <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellChanged</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">value</span>: <span class="kt">displayValue</span><span class="p">(),</span>
+            <span class="nx">row</span><span class="p">,</span>
+            <span class="nx">column</span><span class="p">,</span>
+          <span class="si">}</span><span class="sb">);
+</span><span class="sb">        }
+</span><span class="sb">      }}
+</span><span class="sb">      @change=</span><span class="si">${</span><span class="kr">async</span> <span class="p">(</span><span class="nx">e</span>: <span class="kt">InputEvent</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kr">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">inputValue</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isFormula</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+          <span class="kr">const</span> <span class="nx">fields</span> <span class="o">=</span> <span class="nx">parseField</span><span class="p">(</span><span class="nx">value</span><span class="p">).</span><span class="nx">filter</span><span class="p">(</span>
+            <span class="p">(</span><span class="nx">field</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">isString</span><span class="p">(</span><span class="nx">field</span><span class="p">)</span>
+          <span class="p">);</span>
+          <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">field</span> <span class="k">of</span> <span class="nx">fields</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">await</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellRequest</span><span class="p">,</span> <span class="nx">field</span><span class="p">);</span>
+          <span class="si">}</span><span class="sb">
+</span><span class="sb">          releaseHormone(cellChanged, {
+</span><span class="sb">            value: displayValue(),
+</span><span class="sb">            row,
+</span><span class="sb">            column,
+</span><span class="sb">          });
+</span><span class="sb">        }
+</span><span class="sb">      }}
+</span><span class="sb">      .value=</span><span class="si">${</span><span class="o">!</span><span class="nx">isFocused</span><span class="p">()</span> <span class="o">?</span> <span class="nx">displayValue</span><span class="p">()</span> <span class="o">:</span> <span class="nx">getValue</span><span class="p">()</span><span class="si">}</span><span class="sb">
+</span><span class="sb">    /&gt;`</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nx">defaults</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">row</span>: <span class="kt">0</span><span class="p">,</span>
+      <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;A&#34;</span><span class="p">,</span>
+      <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="nx">styles</span><span class="o">:</span> <span class="p">[</span>
+      <span class="nx">resetFormElements</span><span class="p">,</span>
+      <span class="nx">css</span><span class="sb">`
+</span><span class="sb">        .formula {
+</span><span class="sb">          background-color: var(--highlight-color);
+</span><span class="sb">          border: none;
+</span><span class="sb">        }
+</span><span class="sb">      `</span><span class="p">,</span>
+    <span class="p">],</span>
+  <span class="p">}</span>
+<span class="p">);</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">pureLit</span><span class="p">(</span>
+  <span class="s2">&#34;spreadsheet-app&#34;</span><span class="p">,</span>
+  <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">columns</span> <span class="o">=</span> <span class="s2">&#34;ABCDEFGHIJKLMNOPQRSTUVXYZ&#34;</span><span class="p">;</span>
+    <span class="kr">const</span> <span class="nx">rows</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">html</span><span class="sb">`
+</span><span class="sb">      &lt;button @click=</span><span class="si">${</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">init</span><span class="p">()</span><span class="si">}</span><span class="sb">&gt;Init Example&lt;/button&gt;
+</span><span class="sb">      &lt;table&gt;
+</span><span class="sb">        &lt;tr&gt;
+</span><span class="sb">          &lt;th&gt;&amp;nbsp;&lt;/th&gt;
+</span><span class="sb">          </span><span class="si">${</span><span class="p">[...</span><span class="nx">columns</span><span class="p">].</span><span class="nx">map</span><span class="p">((</span><span class="nx">column</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">html</span><span class="sb">`&lt;th&gt;</span><span class="si">${</span><span class="nx">column</span><span class="si">}</span><span class="sb">&lt;/th&gt;`</span><span class="p">)</span><span class="si">}</span><span class="sb">
+</span><span class="sb">        &lt;/tr&gt;
+</span><span class="sb">        </span><span class="si">${</span><span class="p">[...</span><span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">rows</span><span class="p">)].</span><span class="nx">map</span><span class="p">(</span>
+          <span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">row</span><span class="p">)</span> <span class="o">=&gt;</span>
+            <span class="nx">html</span><span class="sb">`&lt;tr&gt;
+</span><span class="sb">              &lt;th&gt;</span><span class="si">${</span><span class="nx">row</span><span class="si">}</span><span class="sb">&lt;/th&gt;
+</span><span class="sb">              </span><span class="si">${</span><span class="p">[...</span><span class="nx">columns</span><span class="p">].</span><span class="nx">map</span><span class="p">(</span>
+                <span class="p">(</span><span class="nx">column</span><span class="p">)</span> <span class="o">=&gt;</span>
+                  <span class="nx">html</span><span class="sb">`&lt;td&gt;
+</span><span class="sb">                    &lt;cell-element .row=</span><span class="si">${</span><span class="nx">row</span><span class="si">}</span><span class="sb"> column=&#34;</span><span class="si">${</span><span class="nx">column</span><span class="si">}</span><span class="sb">&#34;&gt;&lt;/cell-element&gt;
+</span><span class="sb">                  &lt;/td&gt;`</span>
+              <span class="p">)</span><span class="si">}</span><span class="sb">
+</span><span class="sb">            &lt;/tr&gt;`</span>
+        <span class="p">)</span><span class="si">}</span><span class="sb">
+</span><span class="sb">      &lt;/table&gt;
+</span><span class="sb">    `</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="p">{</span>
+    <span class="nx">styles</span><span class="o">:</span> <span class="p">[</span>
+      <span class="nx">resetFormElements</span><span class="p">,</span>
+      <span class="nx">css</span><span class="sb">`
+</span><span class="sb">        td {
+</span><span class="sb">          padding: 0;
+</span><span class="sb">          margin: 0;
+</span><span class="sb">        }
+</span><span class="sb">      `</span><span class="p">,</span>
+    <span class="p">],</span>
+  <span class="p">}</span>
+<span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">notifyRequests</span><span class="p">(</span>
+  <span class="nx">element</span>: <span class="kt">LitElementWithProps</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;,</span>
+  <span class="nx">displayValue</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="kt">any</span><span class="p">,</span>
+  <span class="nx">row</span>: <span class="kt">number</span><span class="p">,</span>
+  <span class="nx">column</span>: <span class="kt">string</span>
+<span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">elementCell</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">column</span>: <span class="kt">element.column</span><span class="p">,</span> <span class="nx">row</span>: <span class="kt">element.row</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span> <span class="p">};</span>
+  <span class="kr">const</span> <span class="nx">valueRequest</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">cellRequest</span><span class="p">,</span> <span class="p">(</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">elementCell</span><span class="p">)</span>
+  <span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">valueRequest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellChanged</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">value</span>: <span class="kt">displayValue</span><span class="p">(),</span>
+      <span class="nx">row</span><span class="p">,</span>
+      <span class="nx">column</span><span class="p">,</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">collectChanges</span><span class="p">(</span>
+  <span class="nx">element</span>: <span class="kt">LitElementWithProps</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;,</span>
+  <span class="nx">getValue</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="kt">string</span><span class="p">,</span>
+  <span class="nx">displayValue</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="kt">any</span><span class="p">,</span>
+  <span class="nx">setReference</span><span class="o">:</span> <span class="p">(</span><span class="nx">update</span>: <span class="kt">Cell</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">,</span>
+  <span class="nx">getReferences</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">Cell</span><span class="p">[]</span>
+<span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// receptor to collect all changes from other fields
+</span><span class="c1"></span>  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span>
+    <span class="nx">element</span><span class="p">,</span>
+    <span class="nx">cellChanged</span><span class="p">,</span>
+    <span class="c1">// the filter that only applies if the field has a formula and references the field that changed
+</span><span class="c1"></span>    <span class="p">({</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span> <span class="p">})</span> <span class="o">=&gt;</span>
+      <span class="nx">isFormula</span><span class="p">(</span><span class="nx">getValue</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="nx">hasReference</span><span class="p">(</span><span class="nx">getValue</span><span class="p">(),</span> <span class="p">{</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span> <span class="p">})</span>
+  <span class="p">);</span>
+
+  <span class="c1">// if we have a result and the value has changed
+</span><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span>
+    <span class="nx">result</span> <span class="o">&amp;&amp;</span>
+    <span class="nx">getReferences</span><span class="p">().</span><span class="nx">find</span><span class="p">((</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">result</span><span class="p">))</span><span class="o">?</span><span class="p">.</span><span class="nx">value</span> <span class="o">!==</span>
+      <span class="nx">result</span><span class="p">.</span><span class="nx">value</span>
+  <span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setReference</span><span class="p">([</span>
+      <span class="p">...</span><span class="nx">getReferences</span><span class="p">().</span><span class="nx">filter</span><span class="p">((</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">result</span><span class="p">)),</span>
+      <span class="p">{</span> <span class="p">...</span><span class="nx">result</span> <span class="p">},</span>
+    <span class="p">]);</span>
+    <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellChanged</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">value</span>: <span class="kt">displayValue</span><span class="p">(),</span>
+      <span class="nx">row</span>: <span class="kt">element.row</span><span class="p">,</span>
+      <span class="nx">column</span>: <span class="kt">element.column</span><span class="p">,</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kr">const</span> <span class="nx">init</span> <span class="o">=</span> <span class="kr">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">arr</span> <span class="o">=</span> <span class="p">[...</span><span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="mi">99</span><span class="p">)].</span><span class="nx">map</span><span class="p">((</span><span class="nx">_</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">index</span><span class="p">);</span>
+  <span class="k">await</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellSet</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;D&#34;</span><span class="p">,</span>
+    <span class="nx">row</span>: <span class="kt">4</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;=C4&#34;</span><span class="p">,</span>
+  <span class="p">});</span>
+  <span class="k">await</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellSet</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;C&#34;</span><span class="p">,</span>
+    <span class="nx">row</span>: <span class="kt">4</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span>
+      <span class="s2">&#34;=B0+B1-C0&#34;</span> <span class="o">+</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">reduce</span><span class="p">((</span><span class="nx">prev</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="sb">`</span><span class="si">${</span><span class="nx">prev</span><span class="si">}</span><span class="sb">+A</span><span class="si">${</span><span class="nx">index</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">),</span>
+  <span class="p">});</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">key</span> <span class="k">of</span> <span class="nx">arr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellSet</span><span class="p">,</span> <span class="p">{</span>
+      <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;A&#34;</span><span class="p">,</span>
+      <span class="nx">row</span>: <span class="kt">key</span><span class="p">,</span>
+      <span class="nx">value</span>: <span class="kt">Math.round</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">).</span><span class="nx">toString</span><span class="p">(),</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  <span class="k">await</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellSet</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;B&#34;</span><span class="p">,</span>
+    <span class="nx">row</span>: <span class="kt">0</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;324&#34;</span><span class="p">,</span>
+  <span class="p">});</span>
+  <span class="k">await</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellSet</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;B&#34;</span><span class="p">,</span>
+    <span class="nx">row</span>: <span class="kt">1</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;123&#34;</span><span class="p">,</span>
+  <span class="p">});</span>
+  <span class="k">await</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellSet</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">column</span><span class="o">:</span> <span class="s2">&#34;C&#34;</span><span class="p">,</span>
+    <span class="nx">row</span>: <span class="kt">0</span><span class="p">,</span>
+    <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;23134&#34;</span><span class="p">,</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+</pre>
+</body>
+</html>
