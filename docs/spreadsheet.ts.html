@@ -61,7 +61,7 @@
 /* GenericSubheading */ .chroma .gu { color: #75715e }
 body { color: #f8f8f2; background-color: #272822; }
 </style><body class="chroma">
-<pre class="chroma"><span class="kr">import</span> <span class="p">{</span> <span class="nx">useState</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element-state-decoupler&#34;</span><span class="p">;</span>
+<pre class="chroma"><span class="kr">import</span> <span class="p">{</span> <span class="nx">State</span><span class="p">,</span> <span class="nx">useState</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element-state-decoupler&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">css</span><span class="p">,</span> <span class="nx">html</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">LitElementWithProps</span><span class="p">,</span> <span class="nx">pureLit</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;pure-lit&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">defineHormone</span><span class="p">,</span> <span class="nx">useReceptor</span><span class="p">,</span> <span class="nx">releaseHormone</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
@@ -106,28 +106,17 @@ body { color: #f8f8f2; background-color: #272822; }
       <span class="nx">element</span><span class="p">,</span>
       <span class="kc">false</span>
     <span class="p">);</span>
-    <span class="kr">const</span> <span class="p">{</span> <span class="nx">getState</span>: <span class="kt">getReferences</span><span class="p">,</span> <span class="nx">publish</span>: <span class="kt">setReference</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="err">[]</span><span class="p">&gt;(</span>
-      <span class="nx">element</span><span class="p">,</span>
-      <span class="p">[]</span>
-    <span class="p">);</span>
+    <span class="kr">const</span> <span class="nx">references</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="err">[]</span><span class="p">&gt;(</span><span class="nx">element</span><span class="p">,</span> <span class="p">[]);</span>
     <span class="kr">const</span> <span class="nx">displayValue</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span>
       <span class="nx">isFormula</span><span class="p">(</span><span class="nx">getValue</span><span class="p">())</span>
-        <span class="o">?</span> <span class="nx">calculatedField</span><span class="p">(</span><span class="nx">getValue</span><span class="p">(),</span> <span class="nx">getReferences</span><span class="p">())</span>
+        <span class="o">?</span> <span class="nx">calculatedField</span><span class="p">(</span><span class="nx">getValue</span><span class="p">(),</span> <span class="nx">references</span><span class="p">.</span><span class="nx">getState</span><span class="p">())</span>
         <span class="o">:</span> <span class="nx">getValue</span><span class="p">();</span>
 
-    <span class="nx">collectChanges</span><span class="p">(</span>
-      <span class="nx">element</span><span class="p">,</span>
-      <span class="nx">getValue</span><span class="p">,</span>
-      <span class="nx">displayValue</span><span class="p">,</span>
-      <span class="nx">setReference</span><span class="p">,</span>
-      <span class="nx">getReferences</span>
-    <span class="p">);</span>
-    <span class="nx">notifyRequests</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">displayValue</span><span class="p">,</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span><span class="p">);</span>
-    <span class="kr">const</span> <span class="nx">isSet</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">cellSet</span><span class="p">,</span> <span class="p">(</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span>
-      <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="p">{</span> <span class="nx">column</span>: <span class="kt">element.column</span><span class="p">,</span> <span class="nx">row</span>: <span class="kt">element.row</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span> <span class="p">})</span>
-    <span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">isSet</span><span class="p">)</span> <span class="p">{</span>
-      <span class="nx">setValue</span><span class="p">(</span><span class="nx">isSet</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span>
+      <span class="nx">hasChanges</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">getValue</span><span class="p">,</span> <span class="nx">references</span><span class="p">)</span> <span class="o">||</span>
+      <span class="nx">isValueRequested</span><span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="o">||</span>
+      <span class="nx">isSet</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">setValue</span><span class="p">)</span>
+    <span class="p">)</span> <span class="p">{</span>
       <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellChanged</span><span class="p">,</span> <span class="p">{</span>
         <span class="nx">value</span>: <span class="kt">displayValue</span><span class="p">(),</span>
         <span class="nx">row</span><span class="p">,</span>
@@ -227,32 +216,32 @@ body { color: #f8f8f2; background-color: #272822; }
   <span class="p">}</span>
 <span class="p">);</span>
 
-<span class="kd">function</span> <span class="nx">notifyRequests</span><span class="p">(</span>
+<span class="kd">function</span> <span class="nx">isSet</span><span class="p">(</span>
   <span class="nx">element</span>: <span class="kt">LitElementWithProps</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;,</span>
-  <span class="nx">displayValue</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="kt">any</span><span class="p">,</span>
-  <span class="nx">row</span>: <span class="kt">number</span><span class="p">,</span>
-  <span class="nx">column</span>: <span class="kt">string</span>
+  <span class="nx">setValue</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span>
 <span class="p">)</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">isSet</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">cellSet</span><span class="p">,</span> <span class="p">(</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span>
+    <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="p">{</span> <span class="nx">column</span>: <span class="kt">element.column</span><span class="p">,</span> <span class="nx">row</span>: <span class="kt">element.row</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span> <span class="p">})</span>
+  <span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">isSet</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setValue</span><span class="p">(</span><span class="nx">isSet</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">isSet</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">isValueRequested</span><span class="p">(</span><span class="nx">element</span>: <span class="kt">LitElementWithProps</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;)</span> <span class="p">{</span>
   <span class="kr">const</span> <span class="nx">elementCell</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">column</span>: <span class="kt">element.column</span><span class="p">,</span> <span class="nx">row</span>: <span class="kt">element.row</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span> <span class="p">};</span>
   <span class="kr">const</span> <span class="nx">valueRequest</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">cellRequest</span><span class="p">,</span> <span class="p">(</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span>
     <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">elementCell</span><span class="p">)</span>
   <span class="p">);</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">valueRequest</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellChanged</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span>: <span class="kt">displayValue</span><span class="p">(),</span>
-      <span class="nx">row</span><span class="p">,</span>
-      <span class="nx">column</span><span class="p">,</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">valueRequest</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kd">function</span> <span class="nx">collectChanges</span><span class="p">(</span>
+<span class="kd">function</span> <span class="nx">hasChanges</span><span class="p">(</span>
   <span class="nx">element</span>: <span class="kt">LitElementWithProps</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="p">&gt;,</span>
   <span class="nx">getValue</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="kt">string</span><span class="p">,</span>
-  <span class="nx">displayValue</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="kt">any</span><span class="p">,</span>
-  <span class="nx">setReference</span><span class="o">:</span> <span class="p">(</span><span class="nx">update</span>: <span class="kt">Cell</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">,</span>
-  <span class="nx">getReferences</span><span class="o">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">Cell</span><span class="p">[]</span>
-<span class="p">)</span> <span class="p">{</span>
+  <span class="nx">references</span>: <span class="kt">State</span><span class="p">&lt;</span><span class="nt">Cell</span><span class="err">[]</span><span class="p">&gt;</span>
+<span class="p">)</span><span class="o">:</span> <span class="kr">boolean</span> <span class="p">{</span>
   <span class="c1">// receptor to collect all changes from other fields
 </span><span class="c1"></span>  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span>
     <span class="nx">element</span><span class="p">,</span>
@@ -261,23 +250,20 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="c1"></span>    <span class="p">({</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span> <span class="p">})</span> <span class="o">=&gt;</span>
       <span class="nx">isFormula</span><span class="p">(</span><span class="nx">getValue</span><span class="p">())</span> <span class="o">&amp;&amp;</span> <span class="nx">hasReference</span><span class="p">(</span><span class="nx">getValue</span><span class="p">(),</span> <span class="p">{</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span> <span class="p">})</span>
   <span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">result</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
 
-  <span class="c1">// if we have a result and the value has changed
-</span><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span>
-    <span class="nx">result</span> <span class="o">&amp;&amp;</span>
-    <span class="nx">getReferences</span><span class="p">().</span><span class="nx">find</span><span class="p">((</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">result</span><span class="p">))</span><span class="o">?</span><span class="p">.</span><span class="nx">value</span> <span class="o">!==</span>
-      <span class="nx">result</span><span class="p">.</span><span class="nx">value</span>
-  <span class="p">)</span> <span class="p">{</span>
-    <span class="nx">setReference</span><span class="p">([</span>
-      <span class="p">...</span><span class="nx">getReferences</span><span class="p">().</span><span class="nx">filter</span><span class="p">((</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">result</span><span class="p">)),</span>
+  <span class="kd">let</span> <span class="nx">hasChanges</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+  <span class="nx">hasChanges</span> <span class="o">=</span>
+    <span class="nx">references</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">find</span><span class="p">((</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">result</span><span class="p">))</span><span class="o">?</span><span class="p">.</span><span class="nx">value</span> <span class="o">!==</span>
+    <span class="nx">result</span><span class="p">.</span><span class="nx">value</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="nx">hasChanges</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">references</span><span class="p">.</span><span class="nx">publish</span><span class="p">([</span>
+      <span class="p">...</span><span class="nx">references</span><span class="p">.</span><span class="nx">getState</span><span class="p">().</span><span class="nx">filter</span><span class="p">((</span><span class="nx">cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">isEqual</span><span class="p">(</span><span class="nx">cell</span><span class="p">,</span> <span class="nx">result</span><span class="p">)),</span>
       <span class="p">{</span> <span class="p">...</span><span class="nx">result</span> <span class="p">},</span>
     <span class="p">]);</span>
-    <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">cellChanged</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span>: <span class="kt">displayValue</span><span class="p">(),</span>
-      <span class="nx">row</span>: <span class="kt">element.row</span><span class="p">,</span>
-      <span class="nx">column</span>: <span class="kt">element.column</span><span class="p">,</span>
-    <span class="p">});</span>
   <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">hasChanges</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="kr">const</span> <span class="nx">init</span> <span class="o">=</span> <span class="kr">async</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>

@@ -6,9 +6,9 @@ import typescript from "rollup-plugin-typescript2";
 import filesize from "rollup-plugin-filesize";
 
 export default {
-  input: `./example/index.ts`,
+  input: `./docs/index.ts`,
   output: {
-    file: `example/index.js`,
+    file: `docs/index.js`,
     format: "esm",
     sourcemap: true,
   },
