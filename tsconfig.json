@@ -6,6 +6,7 @@
       "outDir": "build",
       "sourceMap": true,
       "composite": true,
+      "declaration": true,
       "declarationMap": true,
       "strict": true,
       "noUnusedLocals": true,
@@ -13,7 +14,7 @@
       "noImplicitReturns": true,
       "noFallthroughCasesInSwitch": true,
       "moduleResolution": "node",
-      "forceConsistentCasingInFileNames": true,
+      "forceConsistentCasingInFileNames": true
     },
     "include": ["src/**/*.ts", "docs/**/*.ts"],
     "exclude": []

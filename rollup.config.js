@@ -5,12 +5,25 @@ import commonjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
 import filesize from "rollup-plugin-filesize";
 
+import pkg from "./package.json"
+
 export default {
   input: `./src/index.ts`,
-  output: {
-    file: `dist/app.js`,
-    format: "esm",
-  },
+  output: [
+    {
+      file: pkg.main,
+      format: 'cjs'
+     },
+     {
+      file: pkg.module,
+      format: 'es' // the preferred format
+     },
+     {
+      file: pkg.browser,
+      format: 'iife',
+      name: 'organicLit'
+     },
+  ],
   plugins: [
     typescript(),
     replace({ "Reflect.decorate": "undefined" }),

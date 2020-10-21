@@ -42,9 +42,9 @@ export function parseField(value: string) {
 }
 
 export const isEqual = (a : Cell, b: Cell) => {
-    if (!a) {
-        return !b
-    } else if (!b) {
+    if (!a || !a.column) {
+        return !b || !b.column
+    } else if (!b || !b.column) {
         return false;
     }
     return a.column.toUpperCase() === b.column.toUpperCase() && 
