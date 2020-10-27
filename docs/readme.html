@@ -134,7 +134,7 @@
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> SomeElement = <span class="hljs-function">() =&gt;</span> {
   <span class="hljs-keyword">const</span> [getState, setState] = useState(<span class="hljs-literal">false</span>)
   useReceptor(element, hormone, <span class="hljs-keyword">async</span> value =&gt; setState(value));
-  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>React State: </span><span class="hljs-subst">${getState()}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
+  <span class="hljs-keyword">return</span> &lt;p&gt;React State: {getState()}&lt;/p&gt;;
 }
 
 <span class="hljs-comment">// with pure-lit</span>

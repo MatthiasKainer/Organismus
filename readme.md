@@ -48,7 +48,7 @@ const hormone = defineHormone<boolean>("example");
 export const SomeElement = () => {
   const [getState, setState] = useState(false)
   useReceptor(element, hormone, async value => setState(value));
-  return <p>React State: ${getState()}</p>;
+  return <p>React State: {getState()}</p>;
 }
 
 // with pure-lit
