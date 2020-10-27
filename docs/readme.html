@@ -82,8 +82,11 @@
 }
 </style>
       
-      <h1>Organic Lit</h1>
-<p>A library to share messages in your lit-element organism without additional wiring. See the tabs for some examples</p>
+      <h1>Organismus</h1>
+<blockquote>
+<p>Organismus, german for Organism. A system regarded as analogous in its structure or functions to a living body.</p>
+</blockquote>
+<p>A library to share messages in your frontend application organism without additional wiring. See the tabs for some examples</p>
 <h2>Note</h2>
 <p>This library is an experimental approach to state management, and is mostly me &quot;thinking out loud&quot;. If you want to use it (or something like it) feel free, just be aware that I feel it's partly too implicit, needs to much thinking to do it right, and I can think of a dozen ways it would screw you over.</p>
 <p>That being said, have fun.</p>
@@ -119,34 +122,45 @@
 </tr>
 </tbody>
 </table>
-<p>The idea that organic-lit follows is different from other libraries because it means that hormones must not be triggered by components only, but basically by everything, and therefore allows you to, as an example, connect a web-socket service class with your components.</p>
+<p>The idea that Organismus follows is different from other libraries because it means that hormones must not be triggered by components only, but basically by everything, and therefore allows you to, as an example, connect a web-socket service class with your components.</p>
 <p>In difference to libraries like redux it means that you don't have one global state, but a state for each hormone that is orchestrated by events.</p>
 <h2>Usage</h2>
 <h3>Hormones and receptors</h3>
 <p>The hormone is the base unit, and has to be defined first anywhere.</p>
 <p>The defined hormone can then be used to be <code>released</code>, or to define a receptor.</p>
-<pre class="hljs" v-pre><code><span class="hljs-keyword">const</span> hormone = defineHormone(<span class="hljs-string">&quot;example&quot;</span>, <span class="hljs-literal">false</span>);
+<pre class="hljs" v-pre><code><span class="hljs-keyword">const</span> hormone = defineHormone&lt;<span class="hljs-built_in">boolean</span>&gt;(<span class="hljs-string">&quot;example&quot;</span>);
 
+<span class="hljs-comment">// with react</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> SomeElement = <span class="hljs-function">() =&gt;</span> {
+  <span class="hljs-keyword">const</span> [getState, setState] = useState(<span class="hljs-literal">false</span>)
+  useReceptor(element, hormone, <span class="hljs-keyword">async</span> value =&gt; setState(value));
+  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>React State: </span><span class="hljs-subst">${getState()}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
+}
+
+<span class="hljs-comment">// with pure-lit</span>
 pureLit(<span class="hljs-string">&quot;some-element&quot;</span>, <span class="hljs-function">(<span class="hljs-params">element</span>) =&gt;</span> {
+  <span class="hljs-keyword">const</span> {getState, publish} = useState(element, <span class="hljs-literal">false</span>)
   <span class="hljs-comment">// define receptor</span>
-  <span class="hljs-keyword">const</span> receptorState = useReceptor(element, hormone);
-  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Receptor State: </span><span class="hljs-subst">${receptorState}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
+  useReceptor(element, hormone, <span class="hljs-keyword">async</span> value =&gt; publish(value));
+  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>pure-lit State: </span><span class="hljs-subst">${getState()}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
 });
 
-<span class="hljs-comment">// some-element: &lt;p&gt;Receptor State: false&lt;/p&gt;</span>
+<span class="hljs-comment">// &lt;SomeElement&gt;: &lt;p&gt;React State: false&lt;/p&gt;</span>
+<span class="hljs-comment">// &lt;some-element&gt;: &lt;p&gt;pure-lit State: false&lt;/p&gt;</span>
 
 <span class="hljs-comment">// release hormone</span>
-releaseHormone(hormone);
+releaseHormone(hormone, <span class="hljs-literal">true</span>);
 
-<span class="hljs-comment">// some-element: &lt;p&gt;Receptor State: true&lt;/p&gt;</span>
+<span class="hljs-comment">// &lt;SomeElement&gt;: &lt;p&gt;React State: true&lt;/p&gt;</span>
+<span class="hljs-comment">// &lt;some-element&gt;: &lt;p&gt;pure-lit State: true&lt;/p&gt;</span>
 </code></pre>
 <p>Unlike the hormone you can find in nature, this one however can transport additional information if you need it. Let's take the example, but this time with a counter</p>
 <pre class="hljs" v-pre><code><span class="hljs-keyword">const</span> hormone = defineHormone(<span class="hljs-string">&quot;example&quot;</span>, { count: <span class="hljs-number">0</span> });
 
 pureLit(<span class="hljs-string">&quot;some-element&quot;</span>, <span class="hljs-function">(<span class="hljs-params">element</span>) =&gt;</span> {
-  <span class="hljs-comment">// define receptor</span>
-  <span class="hljs-keyword">const</span> { count } = useReceptor(element, hormone);
-  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Receptor State: </span><span class="hljs-subst">${count}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
+  <span class="hljs-keyword">const</span> count = useState(element, <span class="hljs-number">0</span>)
+  useReceptor(element, hormone, <span class="hljs-keyword">async</span> value =&gt; count.publish(value.count));
+  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Receptor State: </span><span class="hljs-subst">${count.getState()}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
 });
 
 <span class="hljs-comment">// some-element: &lt;p&gt;Receptor State: 0&lt;/p&gt;</span>
@@ -163,13 +177,15 @@ releaseHormone(hormone, <span class="hljs-function">(<span class="hljs-params">c
 <pre class="hljs" v-pre><code><span class="hljs-keyword">const</span> hormone = defineHormone(<span class="hljs-string">&quot;example&quot;</span>, { count: <span class="hljs-number">0</span>, counter: <span class="hljs-literal">undefined</span> });
 
 pureLit(<span class="hljs-string">&quot;some-element&quot;</span>, <span class="hljs-function">(<span class="hljs-params">element</span>) =&gt;</span> {
-  <span class="hljs-keyword">const</span> { count } = useReceptor(
+  <span class="hljs-keyword">const</span> count = useState(element, <span class="hljs-number">0</span>)
+  useReceptor(
     element,
     hormone,
     <span class="hljs-comment">// the filter that only applies the counter if the name===counter</span>
-    ({ counter }) =&gt; counter === element.name
+    ({ counter }) =&gt; counter === element.name,
+    <span class="hljs-keyword">async</span> ({ count }) =&gt; count.publish(count)
   );
-  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Receptor State: </span><span class="hljs-subst">${count}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
+  <span class="hljs-keyword">return</span> html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Receptor State: </span><span class="hljs-subst">${count.getState()}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>`</span>;
 });
 
 <span class="hljs-comment">// some-element[name=first]: &lt;p&gt;Receptor State: 0&lt;/p&gt;</span>
@@ -184,8 +200,8 @@ releaseHormone(hormone, <span class="hljs-function">(<span class="hljs-params">c
 <span class="hljs-comment">// some-element[name=first]: &lt;p&gt;Receptor State: 1&lt;/p&gt;</span>
 <span class="hljs-comment">// some-element[name=other]: &lt;p&gt;Receptor State: 0&lt;/p&gt;</span>
 </code></pre>
-<p>If we wouldn't have added the filter, all counter instances would have been incremented. <code>organic-lit</code> also takes care that only the one element that receives the change is re-rendered, the other one remains untouched.</p>
-<p>While this might look like a drawback at first (and it is something that can lead to bugs if not tested properly), it is actually one of the huge advantages of <code>organic-lit</code>. Think about a spreadsheet like application. We have thousands of identical cells, some of those with references to others. If a field changes, it releases a hormone, and the others can check if they are affected and change only if.</p>
+<p>If we wouldn't have added the filter, all counter instances would have been incremented.</p>
+<p>While this might look like a drawback at first (and it is something that can lead to bugs if not tested properly), it is actually one of the huge advantages of <code>Organismus</code>. Think about a spreadsheet like application. We have thousands of identical cells, some of those with references to others. If a field changes, it releases a hormone, and the others can check if they are affected and change only if.</p>
 <pre class="hljs" v-pre><code><span class="hljs-keyword">const</span> cellChanged = defineHormone(<span class="hljs-string">&quot;cell/changed&quot;</span>, {
   row: <span class="hljs-number">0</span>,
   column: <span class="hljs-string">&quot;A&quot;</span>,
@@ -193,22 +209,29 @@ releaseHormone(hormone, <span class="hljs-function">(<span class="hljs-params">c
 });
 
 pureLit(<span class="hljs-string">&quot;cell-element&quot;</span>, <span class="hljs-function">(<span class="hljs-params">element</span>) =&gt;</span> {
-  <span class="hljs-keyword">const</span> { row, cell, value } = element;
+  <span class="hljs-keyword">const</span> { row, col } = element;
+  <span class="hljs-keyword">const</span> value = useState(element, <span class="hljs-string">&quot;&quot;</span>)
+  <span class="hljs-keyword">const</span> referenceFieldValues = useState(element, {})
+  isFormula(value) &amp;&amp; referenceFieldValues.publish(loadReferenceFields(value))
   useReceptor(
     element,
     cellChanged,
     <span class="hljs-comment">// the filter that only applies if the field has a formula and references the field that changed</span>
     (cell) =&gt; isFormula(value) &amp;&amp; hasReference(value, cell)
+    <span class="hljs-keyword">async</span> cell =&gt; referenceFieldValues.publish(
+      ...referenceFieldValues.getState().filter(<span class="hljs-function"><span class="hljs-params">field</span> =&gt;</span> field !== cell),
+      cell
+    )
   );
   <span class="hljs-keyword">return</span> isFormula(value)
-    ? html`<span class="hljs-subst">${calculatedField(value)}</span><span class="xml">`</span>
+    ? html`<span class="hljs-subst">${calculatedField(referenceFieldValues)}</span><span class="xml">`</span>
     : html`<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">input</span>
         <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span>
         @<span class="hljs-attr">change</span>=</span></span><span class="hljs-subst">${({ target }</span><span class="xml"><span class="hljs-tag">) =&gt;</span>
           releaseHormone(cellChanged, {
             value: target.value,
             row,
-            cell,
+            col,
           })}
         value=</span><span class="hljs-subst">${value}</span><span class="xml">
       /&gt;`</span>;
@@ -289,49 +312,9 @@ it(<span class="hljs-string">&quot;doesn&#x27;t trigger the connection again aft
   expect(receiver).toBeCalledTimes(<span class="hljs-number">2</span>);
 });
 </code></pre>
-<h3>Read Once Hormone</h3>
-<p><code>Read Once Hormone</code> are a special types of hormone that reset their state to the initial value after all receivers have received the new value. An example can be a form that changes it's value to true once submitted, and back to false immediately after, or the spreadsheet example where every hormone is a <code>Read Once Hormone</code>.</p>
-<pre class="hljs" v-pre><code><span class="hljs-keyword">const</span> doSubmit = defineReadOnceHormone(<span class="hljs-string">&quot;submit&quot;</span>);
-<span class="hljs-keyword">const</span> allValidators = [<span class="hljs-string">&quot;firstName&quot;</span>, <span class="hljs-string">&quot;lastName&quot;</span>]
-    .map(<span class="hljs-function"><span class="hljs-params">field</span> =&gt;</span> defineHormone(<span class="hljs-string">`validate/<span class="hljs-subst">${field}</span>`</span>, {
-        field,
-        isValid: <span class="hljs-literal">false</span>,
-    });
-<span class="hljs-keyword">const</span> validationFailed = defineReadOnceHormone(<span class="hljs-string">&quot;validationFailed&quot;</span>)
-<span class="hljs-keyword">const</span> submitDone = defineReadOnceHormone(<span class="hljs-string">&quot;submitted&quot;</span>)
-
-pureLit(<span class="hljs-string">&quot;input-element&quot;</span>, <span class="hljs-function">(<span class="hljs-params">el</span>) =&gt;</span> {
-  <span class="hljs-keyword">const</span> submitting = useReceptor(el, doSubmit);
-  <span class="hljs-comment">// this will be true only the first time this hormone is released</span>
-  <span class="hljs-keyword">if</span> (submitting) {
-    releaseHormone({ name: <span class="hljs-string">`validate/<span class="hljs-subst">${field}</span>`</span> },
-        { field: el.name, isValid: validate(el) });
-  }
-  <span class="hljs-comment">// ...</span>
-});
-
-hypothalamus.on(allValidators, <span class="hljs-function">(<span class="hljs-params">result</span>) =&gt;</span> {
-    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Object</span>.entries(allValidators).some(<span class="hljs-function">(<span class="hljs-params">{isValid}</span>) =&gt;</span> !isValid)) {
-        releaseHormone(validationFailed, <span class="hljs-literal">true</span>)
-    } <span class="hljs-keyword">else</span> {
-        releaseHormone(submitDone, <span class="hljs-literal">true</span>)
-    }
-});
-
-pureLit(<span class="hljs-string">&quot;my-form&quot;</span>, <span class="hljs-function">(<span class="hljs-params">el</span>) =&gt;</span> {
-    <span class="hljs-comment">// those receptors will return their value only the render cycle</span>
-    <span class="hljs-comment">//  after they were set, and in any other case return undefined</span>
-    <span class="hljs-keyword">const</span> error = useReceptor(el, validationFailed) ?? <span class="hljs-literal">false</span>
-    <span class="hljs-keyword">const</span> success = useReceptor(el, submitDone) ?? <span class="hljs-literal">false</span>
-    <span class="hljs-keyword">return</span> html`<span class="xml">
-        <span class="hljs-tag">&lt;<span class="hljs-name">error-text</span> <span class="hljs-attr">show</span>=</span></span><span class="hljs-subst">${error}</span><span class="xml"><span class="hljs-tag">&gt;</span>Validation failed<span class="hljs-tag">&lt;/<span class="hljs-name">error-text</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">success-text</span> <span class="hljs-attr">show</span>=</span></span><span class="hljs-subst">${success}</span><span class="xml"><span class="hljs-tag">&gt;</span>Form submitted<span class="hljs-tag">&lt;/<span class="hljs-name">success-text</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">input-element</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;firstName&quot;</span>&gt;</span>FirstName<span class="hljs-tag">&lt;<span class="hljs-name">input-element</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">input-element</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;lastName&quot;</span>&gt;</span>LastName<span class="hljs-tag">&lt;<span class="hljs-name">input-element</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=</span></span><span class="hljs-subst">${() =&gt; releaseHormone(doSubmit, <span class="hljs-literal">true</span>)}</span><span class="xml"><span class="hljs-tag">&gt;</span>submit<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
-    `</span>
-});
-</code></pre>
+<h3>Single Hormone</h3>
+<p><code>SingleHormone</code> are a special types of hormone that reset their state to the initial value after all receivers have received the new value. An example can be a form that changes it's value to true once submitted, and back to false immediately after, or the spreadsheet example where every hormone is a <code>SingleHormone</code>.</p>
+<p>You should use this when releasing the same hormone from a lot of places (like in the spreadsheets).</p>
 
     </div>
   

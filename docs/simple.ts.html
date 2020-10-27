@@ -62,6 +62,7 @@
 body { color: #f8f8f2; background-color: #272822; }
 </style><body class="chroma">
 <pre class="chroma"><span class="kr">import</span> <span class="p">{</span> <span class="nx">html</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">useState</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element-state-decoupler&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">pureLit</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;pure-lit&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">defineHormone</span><span class="p">,</span> <span class="nx">releaseHormone</span><span class="p">,</span> <span class="nx">useReceptor</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">resetFormElements</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./css&#34;</span><span class="p">;</span>
@@ -69,7 +70,12 @@ body { color: #f8f8f2; background-color: #272822; }
 <span class="kr">const</span> <span class="nx">inputReceivedHormone</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">string</span><span class="p">&gt;(</span><span class="s2">&#34;simple-app/input-received&#34;</span><span class="p">);</span>
 
 <span class="kr">export</span> <span class="k">default</span> <span class="nx">pureLit</span><span class="p">(</span><span class="s2">&#34;simple-app&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kr">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">inputReceivedHormone</span><span class="p">);</span>
+  <span class="kr">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">useState</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="s2">&#34;&#34;</span><span class="p">)</span>
+  <span class="nx">useReceptor</span><span class="p">(</span>
+    <span class="nx">element</span><span class="p">,</span> 
+    <span class="nx">inputReceivedHormone</span><span class="p">,</span>
+    <span class="kr">async</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="nx">state</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+  <span class="p">);</span>
 
   <span class="k">return</span> <span class="nx">html</span><span class="sb">` &lt;div&gt;
 </span><span class="sb">      &lt;input
@@ -81,7 +87,7 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="sb">        placeholder=&#34;Insert something&#34;
 </span><span class="sb">      /&gt;
 </span><span class="sb">    &lt;/div&gt;
-</span><span class="sb">    Receptor received: </span><span class="si">${</span><span class="nx">result</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+</span><span class="sb">    Receptor received: </span><span class="si">${</span><span class="nx">state</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
 <span class="p">},</span> <span class="p">{</span>
   <span class="nx">styles</span>: <span class="kt">resetFormElements</span>
 <span class="p">});</span>

@@ -14,7 +14,8 @@ import {
 import "./Input";
 import { LitElement } from "lit-element";
 import { FormElementHoromoneValue, FormProps } from "../types";
-import { defineReadOnceHormone } from "../../../src/hormone";
+import { defineSingleHormone } from "../../../src";
+import { useState } from "lit-element-state-decoupler";
 
 describe("Input", () => {
   describe("When triggered on form submit", () => {
@@ -27,11 +28,12 @@ describe("Input", () => {
         "test/inputValue",
         { defaultValue: { form, value: "", name: "" } }
       );
-      hormoneToTriggerSubmit = defineReadOnceHormone<string>("test/onSubmit");
+      hormoneToTriggerSubmit = defineSingleHormone<string>("test/onSubmit");
 
       pureLit("trigger-on-form-submit", (el: LitElement) => {
-        const result = useReceptor(el, hormoneToReleaseInputValue);
-        return html`<div data-testid="result">${result?.value}</div>
+        const result = useState(el, {value: ""})
+        useReceptor(el, hormoneToReleaseInputValue, async val => result.publish(val));
+        return html`<div data-testid="result">${result.getState().value}</div>
           <component-atom-input
             name="name"
             label="label}"

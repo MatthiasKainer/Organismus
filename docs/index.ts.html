@@ -107,6 +107,9 @@ body { color: #f8f8f2; background-color: #272822; }
 <span class="kr">const</span> <span class="nx">activePanel</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">string</span><span class="p">&gt;(</span><span class="s2">&#34;app/panel&#34;</span><span class="p">,</span> <span class="p">{</span>
   <span class="nx">defaultValue</span><span class="o">:</span> <span class="s2">&#34;readme&#34;</span><span class="p">,</span>
 <span class="p">});</span>
+<span class="kr">const</span> <span class="nx">activeForm</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">string</span><span class="p">&gt;(</span><span class="s2">&#34;app/panel/form&#34;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">defaultValue</span><span class="o">:</span> <span class="s2">&#34;logic&#34;</span><span class="p">,</span>
+<span class="p">});</span>
 <span class="kr">export</span> <span class="k">default</span> <span class="nx">pureLit</span><span class="p">(</span>
   <span class="s2">&#34;example-app&#34;</span><span class="p">,</span>
   <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -205,7 +208,7 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="sb">          This example contains form that can be submitted at the end.
 </span><span class="sb">        &lt;/blockquote&gt;
 </span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          &lt;code&gt;organic-lit&lt;/code&gt; was not designed to solve forms, however
+</span><span class="sb">          &lt;code&gt;Organismus&lt;/code&gt; was not designed to solve forms, however
 </span><span class="sb">          there are multiple ways to solve form handling with it. This is one
 </span><span class="sb">          example, which is using the hypothalamus for collecting the form data
 </span><span class="sb">          and to orchestrate the validation and finally the submit.
@@ -215,7 +218,21 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="sb">            &lt;form-app&gt;&lt;/form-app&gt;
 </span><span class="sb">          &lt;/div&gt;
 </span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;code-view file=&#34;form.ts&#34;&gt;&lt;/code-view&gt;
+</span><span class="sb">            &lt;component-button-list
+</span><span class="sb">              .items=</span><span class="si">${</span><span class="p">[</span>
+                <span class="s2">&#34;logic&#34;</span><span class="p">,</span>
+                <span class="s2">&#34;ui&#34;</span><span class="p">,</span>
+              <span class="p">]</span><span class="si">}</span><span class="sb">
+</span><span class="sb">              .release=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">
+</span><span class="sb">            &gt;
+</span><span class="sb">            &lt;/component-button-list&gt;
+</span><span class="sb">
+</span><span class="sb">            &lt;component-toggle-panel name=&#34;logic&#34; .receptor=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">&gt;
+</span><span class="sb">              &lt;code-view file=&#34;form/form.logic.ts&#34;&gt;&lt;/code-view&gt;
+</span><span class="sb">            &lt;/component-toggle-panel&gt;
+</span><span class="sb">            &lt;component-toggle-panel name=&#34;ui&#34; .receptor=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">&gt;
+</span><span class="sb">              &lt;code-view file=&#34;form/form.ui.ts&#34;&gt;&lt;/code-view&gt;
+</span><span class="sb">            &lt;/component-toggle-panel&gt;
 </span><span class="sb">          &lt;/div&gt;
 </span><span class="sb">        &lt;/div&gt;
 </span><span class="sb">      &lt;/component-toggle-panel&gt;

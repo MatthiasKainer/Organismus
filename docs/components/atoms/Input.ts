@@ -1,5 +1,5 @@
 import { css } from "lit-element";
-import { useState } from "lit-element-state-decoupler";
+import { State, useState } from "lit-element-state-decoupler";
 import { html } from "lit-html";
 import { LitElementWithProps, pureLit } from "pure-lit";
 import { releaseHormone, useReceptor } from "../../../src";
@@ -26,10 +26,11 @@ type AtomInputProps = InputProps &
 export const Input = pureLit(
   "component-atom-input",
   (element: LitElementWithProps<AtomInputProps>) => {
-    const { getState, publish } = useState<string>(element, "");
-    const value = getState();
+    const value = useState<string>(element, "");
 
-    withSubmit(element, value, publish);
+    withSubmit(element, value);
+
+    const {publish, getState} = value
 
     return html`
       <input
@@ -37,13 +38,12 @@ export const Input = pureLit(
         class="${element.isValid ? "" : "invalid"}"
         name="${element.name || "item"}"
         aria-label=${element.label}
-        .value="${value}"
+        .value="${value.getState()}"
         @input="${(e: InputEvent) => {
           const value = (e.target as HTMLInputElement)?.value;
           publish(value);
           if (
-            withTrigger(element.triggers, InputTriggerBehaviour.OnType) &&
-            getState() !== ""
+            withTrigger(element.triggers, InputTriggerBehaviour.OnType)
           ) {
             releaseHormone(element.release, {
               name: element.name,
@@ -55,15 +55,14 @@ export const Input = pureLit(
         @keypress=${(e: KeyboardEvent) => {
           if (
             withTrigger(element.triggers, InputTriggerBehaviour.OnEnter) &&
-            getState() !== "" &&
             e.key === "Enter"
           ) {
-            clear(element, publish);
             releaseHormone(element.release, {
               name: element.name,
-              value,
+              value: getState(),
               form: element.form,
             });
+            clear(element, publish);
           }
         }}
         placeholder="${element.placeholder || element.label}"
@@ -101,26 +100,27 @@ async function clear(
 
 function withSubmit(
   element: LitElementWithProps<AtomInputProps>,
-  value: string,
-  publish: (update: string) => void
+  value: State<string>
 ) {
   if (!element.receptor) return;
-
-  const submittedForm = useReceptor(
+  const form = element.form ?? ""
+  const name = element.name ?? ""
+  
+  useReceptor(
     element,
     element.receptor,
-    (submit) => submit?.form === element.form
+    (submit) => submit?.form === element.form,
+    async () => {
+      if (
+        withTrigger(element.triggers, InputTriggerBehaviour.OnSubmit)
+      ) {
+        releaseHormone(element.release, {
+          name,
+          value: value.getState(),
+          form,
+        });
+        clear(element, value.publish);
+      }
+    }
   );
-
-  if (
-    submittedForm &&
-    withTrigger(element.triggers, InputTriggerBehaviour.OnSubmit)
-  ) {
-    clear(element, publish);
-    releaseHormone(element.release, {
-      name: element.name ?? "",
-      value,
-      form: element.form ?? "",
-    });
-  }
 }

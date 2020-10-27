@@ -1,5 +1,5 @@
 {
-  "name": "organic-lit",
+  "name": "organismus",
   "version": "1.0.1",
   "description": "",
   "main": "dist/index.cjs.js",
@@ -9,7 +9,7 @@
   "scripts": {
     "build": "rollup -c",
     "build:readme": "rm -rf docs/readme.html && md2html readme.md -o docs/readme.html",
-    "build:code-examples": "rm -rf docs/*.ts.html && for file in $(ls docs/*.ts); do ~/go/bin/chroma --style=\"monokai\" --html \"$file\" > \"$file.html\"; done",
+    "build:code-examples": "rm -rf docs/**/*.ts.html && for file in $(ls docs/*.ts docs/form/*.ts); do ~/go/bin/chroma --style=\"monokai\" --html \"$file\" > \"$file.html\"; done",
     "build:example": "npm run build:readme && npm run build:code-examples && rollup -c rollup.example.config.js",
     "test": "jest"
   },

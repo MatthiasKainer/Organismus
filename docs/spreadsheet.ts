@@ -1,7 +1,7 @@
-import { State, useState } from "lit-element-state-decoupler";
+import { useState } from "lit-element-state-decoupler";
 import { css, html } from "lit-element";
 import { LitElementWithProps, pureLit } from "pure-lit";
-import { defineHormone, useReceptor, releaseHormone } from "../src";
+import { defineSingleHormone, useReceptor, releaseHormone } from "../src";
 import {
   calculatedField,
   Cell,
@@ -13,24 +13,22 @@ import {
 } from "./spreadsheet-utils";
 import { resetFormElements } from "./css";
 
-const cellSet = defineHormone<Cell>("cell/set", {
+const onCellSet = defineSingleHormone<Cell>("cell/set", {
   defaultValue: {
     row: -1,
     column: "",
     value: "",
   },
-  readOnce: true,
 });
-const cellChanged = defineHormone<Cell>("cell/changed", {
+const onCellChanged = defineSingleHormone<Cell>("cell/changed", {
   defaultValue: {
     row: -1,
     column: "",
     value: "",
   },
-  readOnce: true,
 });
 
-const cellRequest = defineHormone<Cell>("cell/request", { readOnce: true });
+const onCellRequested = defineSingleHormone<Cell>("cell/request");
 
 const inputValue = (e: InputEvent) => (e.target as HTMLInputElement)?.value;
 
@@ -49,17 +47,44 @@ pureLit(
         ? calculatedField(getValue(), references.getState())
         : getValue();
 
-    if (
-      hasChanges(element, getValue, references) ||
-      isValueRequested(element) ||
-      isSet(element, setValue)
-    ) {
-      releaseHormone(cellChanged, {
+    const releaseCellChanged = () =>
+      releaseHormone(onCellChanged, {
         value: displayValue(),
         row,
         column,
       });
-    }
+
+    useReceptor(
+      element,
+      onCellSet,
+      (cell) =>
+        isEqual(cell, { column: element.column, row: element.row, value: "" }),
+      async (cell) => (setValue(cell.value), releaseCellChanged())
+    );
+
+    useReceptor(
+      element,
+      onCellRequested,
+      (cell) =>
+        isEqual(cell, { column: element.column, row: element.row, value: "" }),
+      async () => releaseCellChanged()
+    );
+
+    useReceptor(
+      element,
+      onCellChanged,
+      ({ row, column }) =>
+        isFormula(getValue()) && hasReference(getValue(), { row, column }),
+      async (result) => {
+        if (references.getState().find((cell) => isEqual(cell, result))?.value !== result.value) {
+          references.publish([
+            ...references.getState().filter((cell) => !isEqual(cell, result)),
+            { ...result },
+          ]);
+          releaseCellChanged()
+        }
+      }
+    );
 
     return html`<input
       type="text"
@@ -69,11 +94,7 @@ pureLit(
       @input=${(e: InputEvent) => {
         setValue(inputValue(e));
         if (!isFormula(inputValue(e))) {
-          releaseHormone(cellChanged, {
-            value: displayValue(),
-            row,
-            column,
-          });
+          releaseCellChanged()
         }
       }}
       @change=${async (e: InputEvent) => {
@@ -83,13 +104,9 @@ pureLit(
             (field: any) => !isString(field)
           );
           for (const field of fields) {
-            await releaseHormone(cellRequest, field);
+            await releaseHormone(onCellRequested, field);
           }
-          releaseHormone(cellChanged, {
-            value: displayValue(),
-            row,
-            column,
-          });
+          releaseCellChanged()
         }
       }}
       .value=${!isFocused() ? displayValue() : getValue()}
@@ -153,87 +170,37 @@ export default pureLit(
   }
 );
 
-function isSet(
-  element: LitElementWithProps<Cell>,
-  setValue: (value: string) => void
-) {
-  const isSet = useReceptor(element, cellSet, (cell) =>
-    isEqual(cell, { column: element.column, row: element.row, value: "" })
-  );
-  if (isSet !== undefined) {
-    setValue(isSet.value);
-  }
-  return isSet !== undefined;
-}
-
-function isValueRequested(element: LitElementWithProps<Cell>) {
-  const elementCell = { column: element.column, row: element.row, value: "" };
-  const valueRequest = useReceptor(element, cellRequest, (cell) =>
-    isEqual(cell, elementCell)
-  );
-  return valueRequest;
-}
-
-function hasChanges(
-  element: LitElementWithProps<Cell>,
-  getValue: () => string,
-  references: State<Cell[]>
-): boolean {
-  // receptor to collect all changes from other fields
-  const result = useReceptor(
-    element,
-    cellChanged,
-    // the filter that only applies if the field has a formula and references the field that changed
-    ({ row, column }) =>
-      isFormula(getValue()) && hasReference(getValue(), { row, column })
-  );
-  if (!result) return false;
-
-  let hasChanges = false;
-  hasChanges =
-    references.getState().find((cell) => isEqual(cell, result))?.value !==
-    result.value;
-
-  if (hasChanges) {
-    references.publish([
-      ...references.getState().filter((cell) => !isEqual(cell, result)),
-      { ...result },
-    ]);
-  }
-  return hasChanges;
-}
-
 const init = async () => {
   const arr = [...new Array(99)].map((_, index) => index);
-  await releaseHormone(cellSet, {
+  await releaseHormone(onCellSet, {
     column: "D",
     row: 4,
     value: "=C4",
   });
-  await releaseHormone(cellSet, {
+  await releaseHormone(onCellSet, {
     column: "C",
     row: 4,
     value:
       "=B0+B1-C0" + arr.reduce((prev, _, index) => `${prev}+A${index}`, ""),
   });
   for (const key of arr) {
-    await releaseHormone(cellSet, {
+    await releaseHormone(onCellSet, {
       column: "A",
       row: key,
       value: Math.round(Math.random() * 1000).toString(),
     });
   }
-  await releaseHormone(cellSet, {
+  await releaseHormone(onCellSet, {
     column: "B",
     row: 0,
     value: "324",
   });
-  await releaseHormone(cellSet, {
+  await releaseHormone(onCellSet, {
     column: "B",
     row: 1,
     value: "123",
   });
-  await releaseHormone(cellSet, {
+  await releaseHormone(onCellSet, {
     column: "C",
     row: 0,
     value: "23134",

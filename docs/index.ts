@@ -44,6 +44,9 @@ export * from "./spreadsheet";
 const activePanel = defineHormone<string>("app/panel", {
   defaultValue: "readme",
 });
+const activeForm = defineHormone<string>("app/panel/form", {
+  defaultValue: "logic",
+});
 export default pureLit(
   "example-app",
   () => {
@@ -142,7 +145,7 @@ export default pureLit(
           This example contains form that can be submitted at the end.
         </blockquote>
         <blockquote>
-          <code>organic-lit</code> was not designed to solve forms, however
+          <code>Organismus</code> was not designed to solve forms, however
           there are multiple ways to solve form handling with it. This is one
           example, which is using the hypothalamus for collecting the form data
           and to orchestrate the validation and finally the submit.
@@ -152,7 +155,21 @@ export default pureLit(
             <form-app></form-app>
           </div>
           <div>
-            <code-view file="form.ts"></code-view>
+            <component-button-list
+              .items=${[
+                "logic",
+                "ui",
+              ]}
+              .release=${activeForm}
+            >
+            </component-button-list>
+
+            <component-toggle-panel name="logic" .receptor=${activeForm}>
+              <code-view file="form/form.logic.ts"></code-view>
+            </component-toggle-panel>
+            <component-toggle-panel name="ui" .receptor=${activeForm}>
+              <code-view file="form/form.ui.ts"></code-view>
+            </component-toggle-panel>
           </div>
         </div>
       </component-toggle-panel>

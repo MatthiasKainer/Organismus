@@ -4,9 +4,11 @@ import { pureLit } from "pure-lit";
 import { html } from "lit-element";
 import userEvent from "@testing-library/user-event";
 import { useReceptor, releaseHormone } from ".";
-import { LitLikeElement, Hormone } from "./types";
+import { Hormone } from "./types";
 import { defineHormone } from "./hormone";
 import { hypothalamus } from "./hypothalamus";
+import { LitLikeElement } from "./testHelpers";
+import { useState } from "lit-element-state-decoupler";
 
 describe(`Given I have a component
 And the component has a receptor`, () => {
@@ -17,8 +19,9 @@ And the component has a receptor`, () => {
   beforeEach(async () => {
     hormone = defineHormone("test", { defaultValue: false });
     pureLit("organic-e2e-with-receptor", (el: LitLikeElement) => {
-      const receptor = useReceptor(el, hormone);
-      return html`<div>Receptor: ${receptor}</div>`;
+      const state = useState(el, false)
+      useReceptor(el, hormone, async (value) => state.publish(value));
+      return html`<div>Receptor: ${state.getState()}</div>`;
     });
     await fixture("<organic-e2e-with-receptor></organic-e2e-with-receptor>");
   });
@@ -48,9 +51,11 @@ And one of the components has a receptor with a filter`, () => {
     jest.resetAllMocks();
     hormone = defineHormone("test", { defaultValue: false });
     pureLit("organic-e2e-with-filter", (el: LitLikeElement) => {
-      const receptor = useReceptor(el, hormone, (val) => val);
+      const state = useState(el, false)
+
+      useReceptor(el, hormone, (val) => val, async val => state.publish(val));
       rerender();
-      return html`<div>Receptor: ${receptor}</div>`;
+      return html`<div>Receptor: ${state.getState()}</div>`;
     });
     await fixture("<organic-e2e-with-filter></organic-e2e-with-filter>");
   });
@@ -90,12 +95,14 @@ And the hypothalamus releases Oxytocin when Prolactin is received`, () => {
     prolactin = defineHormone("prolactin", { defaultValue: false });
     oxytocin = defineHormone("oxytocin", { defaultValue: false });
     pureLit("organic-e2e-with-receptor-prolactin", (el: LitLikeElement) => {
-      const receptor = useReceptor(el, prolactin);
-      return html`<div>Prolactin received: ${receptor}</div>`;
+      const state = useState(el, false)
+      useReceptor(el, prolactin, async val => state.publish(val));
+      return html`<div>Prolactin received: ${state.getState()}</div>`;
     });
     pureLit("organic-e2e-with-receptor-oxytocin", (el: LitLikeElement) => {
-      const receptor = useReceptor(el, oxytocin);
-      return html`<div>Oxytocin received: ${receptor}</div>`;
+      const state = useState(el, false)
+      useReceptor(el, oxytocin, async val => state.publish(val));
+      return html`<div>Oxytocin received: ${state.getState()}</div>`;
     });
 
     hypothalamus.on(prolactin, (value) => releaseHormone(oxytocin, value));
@@ -116,7 +123,7 @@ And the hypothalamus releases Oxytocin when Prolactin is received`, () => {
   describe(`
     When the hormone is released`, () => {
     beforeEach(async () => {
-      releaseHormone(prolactin);
+      await releaseHormone(prolactin, true);
     });
 
     it("has received the Oxytocin", async () => {
@@ -136,15 +143,17 @@ And one of the components has a hormone releaser for Oxytocin`, () => {
     const oxytocin = defineHormone("oxytocin", { defaultValue: false });
 
     pureLit("organic-e2e-with-receptor-prolactin", (el: LitLikeElement) => {
-      const receptor = useReceptor(el, prolactin);
-      return html`<div>Prolactin received: ${receptor}</div>`;
+      const state = useState(el, false)
+      useReceptor(el, prolactin, async val => state.publish(val));
+      return html`<div>Prolactin received: ${state.getState()}</div>`;
     });
     pureLit("organic-e2e-with-receptor-oxytocin", (el: LitLikeElement) => {
-      const receptor = useReceptor(el, oxytocin);
-      return html`<div>Oxytocin received: ${receptor}</div>`;
+      const state = useState(el, false)
+      useReceptor(el, oxytocin, async val => state.publish(val));
+      return html`<div>Oxytocin received: ${state.getState()}</div>`;
     });
     pureLit("organic-e2e-with-releaser-oxytocin", () => {
-      return html`<button @click="${() => releaseHormone(oxytocin)}"></button>`;
+      return html`<button @click="${() => releaseHormone(oxytocin, true)}"></button>`;
     });
 
     await fixture(`

@@ -3,6 +3,7 @@ import { pureLit, LitElementWithProps } from "pure-lit";
 import {
   FormElementHoromoneValue,
   InputProps,
+  InputTriggerBehaviour,
   ReceptorProps,
   ReleaseProps,
   ValidationProps,
@@ -32,6 +33,7 @@ export const InputWithLabelAndValidation = pureLit(
             name="${element.name}"
             label="${element.label}"
             placeholder="${element.placeholder}"
+            .triggers=${[InputTriggerBehaviour.OnEnter, InputTriggerBehaviour.OnType, InputTriggerBehaviour.OnSubmit]}
             .isValid=${element.isValid}
             .clear=${element.clear}
             .release=${element.release}

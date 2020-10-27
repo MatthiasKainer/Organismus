@@ -1,11 +1,9 @@
-export type LitLikeElement = {
-    updateComplete: Promise<unknown>
-    requestUpdate: () => void
-}
+export type Parent = unknown
 
 export type Receptor<T> = {
+    parent: Parent
     onlyIf?: (value: T) => boolean
-    element: LitLikeElement
+    onTriggered: (value: T) => Promise<void | unknown>
 }
 
 export type Transport<T> = {

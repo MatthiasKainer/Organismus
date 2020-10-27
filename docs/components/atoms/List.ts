@@ -1,3 +1,4 @@
+import { useState } from "lit-element-state-decoupler";
 import { html } from "lit-html";
 import { LitElementWithProps, pureLit } from "pure-lit";
 import { useReceptor } from "../../../src";
@@ -6,16 +7,17 @@ import { FormProps, ListReceptor, ReceptorProps } from "../types";
 export const List = pureLit(
   "component-list",
   (element: LitElementWithProps<ReceptorProps<ListReceptor>> & FormProps) => {
-    const list = useReceptor(
+    const list = useState<ListReceptor | undefined>(element, { items: [] });
+
+    useReceptor(
       element,
       element.receptor,
-      (list) => list.form === element.form
+      (list) => list?.form === element.form,
+      async (result) => list.publish(result)
     );
-    return list?.items && Array.isArray(list.items)
-      ? html`<ul>
-          ${list.items.map((item) => html`<li>${item}</li>`)}
-        </ul>`
-      : html``;
+    return html`<ul>
+      ${list.getState()?.items.map((item) => html`<li>${item}</li>`)}
+    </ul>`;
   },
   { defaults: { form: "" } }
 );

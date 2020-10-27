@@ -3,6 +3,7 @@ import { organism } from "./base";
 import { testableLitElement } from "./testHelpers";
 
 type ExampleHormone = boolean;
+const onTriggered = jest.fn()
 
 describe("Create Hormone", () => {
   it("doesn't allow defining a hormone twice", () => {
@@ -50,14 +51,15 @@ describe("Release Hormone", () => {
     const litElement = testableLitElement();
     const hormone = defineHormone<ExampleHormone>("example");
     organism["example"].receptors.push({
-      element: litElement,
+      parent: litElement,
+      onTriggered
     });
 
     // When
     await releaseHormone(hormone);
 
     // Then
-    expect(litElement.requestUpdate).toBeCalledTimes(1);
+    expect(onTriggered).toBeCalledTimes(1);
   });
 
   it("calls the transformation if one is defined", async () => {
@@ -105,6 +107,7 @@ describe("Release Hormone", () => {
 });
 
 describe("Release single Hormone", () => {
+  
   it("resets it to the default after called", async () => {
     // Given
     const hormone = defineHormone<ExampleHormone>("example", {

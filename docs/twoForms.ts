@@ -1,4 +1,5 @@
 import { html } from "lit-element";
+import { useState } from "lit-element-state-decoupler";
 import { pureLit } from "pure-lit";
 import { defineHormone, releaseHormone, useReceptor } from "../src";
 import { resetFormElements } from "./css";
@@ -13,13 +14,21 @@ const inputReceivedHormone = defineHormone<InputHormone>(
 );
 
 export default pureLit("two-form-app", (element) => {
-  const firstResult = useReceptor(element, inputReceivedHormone,
-    (form) => form?.form === "form-1"
+  const first = useState<InputHormone | undefined>(element, undefined)
+  const second = useState<InputHormone | undefined>(element, undefined)
+  const third = useState<InputHormone | undefined>(element, undefined)
+
+  useReceptor(element, inputReceivedHormone,
+    (form) => form?.form === "form-1",
+    async form => first.publish(form)
   );
-  const secondResult = useReceptor(element, inputReceivedHormone,
-    (form) => form?.form === "form-2"
+  useReceptor(element, inputReceivedHormone,
+    (form) => form?.form === "form-2",
+    async form => second.publish(form)
   );
-  const anyResult = useReceptor(element, inputReceivedHormone);
+  useReceptor(element, inputReceivedHormone,
+    async form => third.publish(form)
+  );
 
   return html` <div>
       <input
@@ -33,7 +42,7 @@ export default pureLit("two-form-app", (element) => {
         }}"
         placeholder="Insert something"
       />
-      Receptor form-1 received: ${JSON.stringify(firstResult)}
+      Receptor form-1 received: ${JSON.stringify(first.getState())}
     </div>
     <div>
     <input
@@ -47,9 +56,9 @@ export default pureLit("two-form-app", (element) => {
         }}"
         placeholder="Insert something"
       />
-      Receptor form-2 received: ${JSON.stringify(secondResult)}
+      Receptor form-2 received: ${JSON.stringify(second.getState())}
     </div>
-    Global receptor received: ${JSON.stringify(anyResult)}`;
+    Global receptor received: ${JSON.stringify(third.getState())}`;
 }, {
   styles: resetFormElements
 });

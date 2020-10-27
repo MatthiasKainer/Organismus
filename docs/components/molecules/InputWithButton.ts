@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { pureLit, LitElementWithProps } from "pure-lit";
-import { defineHormone, hypothalamus, releaseHormone } from "../../../src";
+import { defineHormone, releaseHormone, useReceptor } from "../../../src";
 import { resetFormElements } from "../../css";
 import { FormElementHoromoneValue, FormProps, InputProps, InputTriggerBehaviour, ReleaseProps } from "../types";
 
@@ -18,11 +18,10 @@ export const InputWithButton = pureLit(
   ) => {
     const {name, label, placeholder, clear, form} = element;
 
-    hypothalamus.on(onInputReceived, (value) => {
-      if (form === value.form) {
-        releaseHormone(element.release, value)
-      }
-    })
+    useReceptor(element, onInputReceived,
+      (value) => form === value.form,
+      async value => releaseHormone(element.release, value)
+    )
     return html`
       <component-atom-input
         name="${name}"

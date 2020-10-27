@@ -77,7 +77,7 @@ class Hypothalamus {
     );
 
     // add new items to queue
-    let newItems = Object.keys(hormoneActionQueue.list).filter(
+    const newItems = Object.keys(hormoneActionQueue.list).filter(
       (key) =>
         key.indexOf(`;${hormone.name};`) > -1 &&
         queuedItems.every((queue) => queue !== key)

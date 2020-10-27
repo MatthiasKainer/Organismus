@@ -19,7 +19,8 @@ export const CodeView = pureLit(
         .then((text) => publish(text));
     });
 
-    return html`${unsafeHTML(getState())}`;
+    return html`<pre>${element.file}</pre>
+    ${unsafeHTML(getState())}`;
   },
   {
     defaults: { file: "" },

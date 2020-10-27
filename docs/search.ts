@@ -7,14 +7,14 @@ import {
   defineHormone,
   hypothalamus,
   releaseHormone,
-  useReceptor,
 } from "../src";
 import { ListReceptor } from "./components";
+import { defineSingleHormone } from "../src/hormone";
 
 const query = defineHormone("search/query", {
   defaultValue: { value: "", form: undefined },
 });
-const filtered = defineHormone<ListReceptor>("search/filtered", {
+const filtered = defineSingleHormone<ListReceptor>("search/filtered", {
   defaultValue: { items: [] },
 });
 
@@ -35,16 +35,9 @@ hypothalamus.on(query, ({ value, form }) => {
     .then((colors: Colors) =>
       releaseHormone(filtered, { items: filter(colors, value), form })
     );
-  releaseHormone(filtered);
 });
 
-pureLit("search-app", (element) => {
-  const results = useReceptor(element, filtered);
-
-  if (!results) {
-    return html`<div>Loading...</div>`;
-  }
-
+pureLit("search-app", () => {
   return html`
     <component-headline level="1">Search for a color</component-headline>
     <div>

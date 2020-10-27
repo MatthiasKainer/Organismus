@@ -1,6 +1,8 @@
-# Organic Lit
+# Organismus
 
-A library to share messages in your lit-element organism without additional wiring. See the tabs for some examples
+> Organismus, german for Organism. A system regarded as analogous in its structure or functions to a living body.
+
+A library to share messages in your frontend application organism without additional wiring. See the tabs for some examples
 
 ## Note
 
@@ -27,7 +29,7 @@ This library uses the wording that is coming from Biology, and at such aims to r
 | **Receptor**     | An interface on a LitElement that can receive one type of hormone and gets triggered every time the hormone is released |
 | **Hypothalamus** | Allows to orchestrate hormones and trigger side-effects on a global (organism wide) level                               |
 
-The idea that organic-lit follows is different from other libraries because it means that hormones must not be triggered by components only, but basically by everything, and therefore allows you to, as an example, connect a web-socket service class with your components.
+The idea that Organismus follows is different from other libraries because it means that hormones must not be triggered by components only, but basically by everything, and therefore allows you to, as an example, connect a web-socket service class with your components.
 
 In difference to libraries like redux it means that you don't have one global state, but a state for each hormone that is orchestrated by events.
 
@@ -40,20 +42,31 @@ The hormone is the base unit, and has to be defined first anywhere.
 The defined hormone can then be used to be `released`, or to define a receptor.
 
 ```ts
-const hormone = defineHormone("example", false);
+const hormone = defineHormone<boolean>("example");
 
+// with react
+export const SomeElement = () => {
+  const [getState, setState] = useState(false)
+  useReceptor(element, hormone, async value => setState(value));
+  return html`<p>React State: ${getState()}</p>`;
+}
+
+// with pure-lit
 pureLit("some-element", (element) => {
+  const {getState, publish} = useState(element, false)
   // define receptor
-  const receptorState = useReceptor(element, hormone);
-  return html`<p>Receptor State: ${receptorState}</p>`;
+  useReceptor(element, hormone, async value => publish(value));
+  return html`<p>pure-lit State: ${getState()}</p>`;
 });
 
-// some-element: <p>Receptor State: false</p>
+// <SomeElement>: <p>React State: false</p>
+// <some-element>: <p>pure-lit State: false</p>
 
 // release hormone
-releaseHormone(hormone);
+releaseHormone(hormone, true);
 
-// some-element: <p>Receptor State: true</p>
+// <SomeElement>: <p>React State: true</p>
+// <some-element>: <p>pure-lit State: true</p>
 ```
 
 Unlike the hormone you can find in nature, this one however can transport additional information if you need it. Let's take the example, but this time with a counter
@@ -62,9 +75,9 @@ Unlike the hormone you can find in nature, this one however can transport additi
 const hormone = defineHormone("example", { count: 0 });
 
 pureLit("some-element", (element) => {
-  // define receptor
-  const { count } = useReceptor(element, hormone);
-  return html`<p>Receptor State: ${count}</p>`;
+  const count = useState(element, 0)
+  useReceptor(element, hormone, async value => count.publish(value.count));
+  return html`<p>Receptor State: ${count.getState()}</p>`;
 });
 
 // some-element: <p>Receptor State: 0</p>
@@ -85,13 +98,15 @@ Receptors can also have filters. This can be used to manage the global state dra
 const hormone = defineHormone("example", { count: 0, counter: undefined });
 
 pureLit("some-element", (element) => {
-  const { count } = useReceptor(
+  const count = useState(element, 0)
+  useReceptor(
     element,
     hormone,
     // the filter that only applies the counter if the name===counter
-    ({ counter }) => counter === element.name
+    ({ counter }) => counter === element.name,
+    async ({ count }) => count.publish(count)
   );
-  return html`<p>Receptor State: ${count}</p>`;
+  return html`<p>Receptor State: ${count.getState()}</p>`;
 });
 
 // some-element[name=first]: <p>Receptor State: 0</p>
@@ -107,9 +122,9 @@ releaseHormone(hormone, (currentCount) => ({
 // some-element[name=other]: <p>Receptor State: 0</p>
 ```
 
-If we wouldn't have added the filter, all counter instances would have been incremented. `organic-lit` also takes care that only the one element that receives the change is re-rendered, the other one remains untouched.
+If we wouldn't have added the filter, all counter instances would have been incremented. 
 
-While this might look like a drawback at first (and it is something that can lead to bugs if not tested properly), it is actually one of the huge advantages of `organic-lit`. Think about a spreadsheet like application. We have thousands of identical cells, some of those with references to others. If a field changes, it releases a hormone, and the others can check if they are affected and change only if.
+While this might look like a drawback at first (and it is something that can lead to bugs if not tested properly), it is actually one of the huge advantages of `Organismus`. Think about a spreadsheet like application. We have thousands of identical cells, some of those with references to others. If a field changes, it releases a hormone, and the others can check if they are affected and change only if.
 
 ```ts
 const cellChanged = defineHormone("cell/changed", {
@@ -119,22 +134,29 @@ const cellChanged = defineHormone("cell/changed", {
 });
 
 pureLit("cell-element", (element) => {
-  const { row, cell, value } = element;
+  const { row, col } = element;
+  const value = useState(element, "")
+  const referenceFieldValues = useState(element, {})
+  isFormula(value) && referenceFieldValues.publish(loadReferenceFields(value))
   useReceptor(
     element,
     cellChanged,
     // the filter that only applies if the field has a formula and references the field that changed
     (cell) => isFormula(value) && hasReference(value, cell)
+    async cell => referenceFieldValues.publish(
+      ...referenceFieldValues.getState().filter(field => field !== cell),
+      cell
+    )
   );
   return isFormula(value)
-    ? html`${calculatedField(value)}`
+    ? html`${calculatedField(referenceFieldValues)}`
     : html`<input
         type="text"
         @change=${({ target }) =>
           releaseHormone(cellChanged, {
             value: target.value,
             row,
-            cell,
+            col,
           })}
         value=${value}
       />`;
@@ -225,49 +247,8 @@ it("doesn't trigger the connection again after all hormones are released but onl
 });
 ```
 
-### Read Once Hormone
+### Single Hormone
 
-`Read Once Hormone` are a special types of hormone that reset their state to the initial value after all receivers have received the new value. An example can be a form that changes it's value to true once submitted, and back to false immediately after, or the spreadsheet example where every hormone is a `Read Once Hormone`.
+`SingleHormone` are a special types of hormone that reset their state to the initial value after all receivers have received the new value. An example can be a form that changes it's value to true once submitted, and back to false immediately after, or the spreadsheet example where every hormone is a `SingleHormone`.
 
-```ts
-const doSubmit = defineReadOnceHormone("submit");
-const allValidators = ["firstName", "lastName"]
-    .map(field => defineHormone(`validate/${field}`, {
-        field,
-        isValid: false,
-    });
-const validationFailed = defineReadOnceHormone("validationFailed")
-const submitDone = defineReadOnceHormone("submitted")
-
-pureLit("input-element", (el) => {
-  const submitting = useReceptor(el, doSubmit);
-  // this will be true only the first time this hormone is released
-  if (submitting) {
-    releaseHormone({ name: `validate/${field}` },
-        { field: el.name, isValid: validate(el) });
-  }
-  // ...
-});
-
-hypothalamus.on(allValidators, (result) => {
-    if (Object.entries(allValidators).some(({isValid}) => !isValid)) {
-        releaseHormone(validationFailed, true)
-    } else {
-        releaseHormone(submitDone, true)
-    }
-});
-
-pureLit("my-form", (el) => {
-    // those receptors will return their value only the render cycle
-    //  after they were set, and in any other case return undefined
-    const error = useReceptor(el, validationFailed) ?? false
-    const success = useReceptor(el, submitDone) ?? false
-    return html`
-        <error-text show=${error}>Validation failed</error-text>
-        <success-text show=${success}>Form submitted</success-text>
-        <input-element name="firstName">FirstName<input-element>
-        <input-element name="lastName">LastName<input-element>
-        <button @click=${() => releaseHormone(doSubmit, true)}>submit</button>
-    `
-});
-```
+You should use this when releasing the same hormone from a lot of places (like in the spreadsheets).

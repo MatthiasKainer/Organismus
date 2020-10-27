@@ -9,6 +9,7 @@ import { Hormone, defineHormone, useReceptor } from "../../../src";
 import "./Input";
 import { LitElement } from "lit-element";
 import { FormElementHoromoneValue } from "../types";
+import { useState } from "lit-element-state-decoupler";
 
 describe("Input", () => {
   describe("When triggered on enter", () => {
@@ -22,8 +23,9 @@ describe("Input", () => {
       );
 
       pureLit("trigger-on-enter", (el: LitElement) => {
-        const result = useReceptor(el, hormoneToReleaseInputValue);
-        return html`<div data-testid="result">${result?.value}</div>
+        const result = useState(el, {value: ""})
+        useReceptor(el, hormoneToReleaseInputValue, async val => result.publish(val));
+        return html`<div data-testid="result">${result.getState().value}</div>
           <component-atom-input
             name="name"
             label="label}"

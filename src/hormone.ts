@@ -19,11 +19,11 @@ type HormoneOptions<T> = {
   loadIfExists?: boolean;
 };
 
-export function defineReadOnceHormone<T>(
+export function defineSingleHormone<T>(
   name: string,
   options: HormoneOptions<T> = {}
 ): Hormone<T> {
-  return defineHormone(name, { ...options, readOnce: true });
+  return defineHormone(name, {...options, readOnce: true})
 }
 
 export function defineHormone<T>(
@@ -66,9 +66,15 @@ export async function releaseHormone<T>(
 ): Promise<Transport<T>>;
 
 export async function releaseHormone<T>(
-  { name }: Hormone<T>,
+  hormone: Hormone<T>,
   value?: T | ((values: T) => T)
 ) {
+  if (!hormone) {
+    error("hormone.releaseHormone", new Error("Hormone cannot be undefined"));
+    throw new Error("Hormone cannot be undefined");
+  }
+
+  const {name} = hormone;
   if (!organism[name]) {
     error("hormone.releaseHormone", new Error("Hormone does not exist"), name);
     throw new Error("Hormone does not exist");
@@ -78,7 +84,7 @@ export async function releaseHormone<T>(
     organism[name].value = value;
   } else {
     organism[name].value =
-      value === undefined ? true : value(organism[name].value);
+      !value ? value : value(organism[name].value);
   }
   
   info(
@@ -88,8 +94,11 @@ export async function releaseHormone<T>(
     organism[name].value
   );
   const { receptors, transformation } = organism[name];
-  receptors
-    .filter((receptor) => {
+
+  transformation && transformation(organism[name].value);
+  hypothalamus.orchestrate({ name }, organism[name].value);
+  await Promise.all(
+    receptors.filter((receptor) => {
       const keep = receptor.onlyIf === undefined || receptor.onlyIf(organism[name].value);
       debug(
         "hormone.releaseHormone",
@@ -99,13 +108,7 @@ export async function releaseHormone<T>(
         receptor
       );
       return keep;
-    })
-    .forEach(({ element }) => element.requestUpdate());
-
-  transformation && transformation(organism[name].value);
-  hypothalamus.orchestrate({ name }, organism[name].value);
-  await Promise.all(
-    receptors.map((receptor) => receptor.element.updateComplete)
+    }).map((receptor) => receptor?.onTriggered(organism[name].value))
   );
   if (organism[name].readOnce) {
     debug(

@@ -70,14 +70,14 @@ body { color: #f8f8f2; background-color: #272822; }
   <span class="nx">defineHormone</span><span class="p">,</span>
   <span class="nx">hypothalamus</span><span class="p">,</span>
   <span class="nx">releaseHormone</span><span class="p">,</span>
-  <span class="nx">useReceptor</span><span class="p">,</span>
 <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
 <span class="kr">import</span> <span class="p">{</span> <span class="nx">ListReceptor</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./components&#34;</span><span class="p">;</span>
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">defineSingleHormone</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src/hormone&#34;</span><span class="p">;</span>
 
 <span class="kr">const</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">(</span><span class="s2">&#34;search/query&#34;</span><span class="p">,</span> <span class="p">{</span>
   <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="nx">form</span>: <span class="kt">undefined</span> <span class="p">},</span>
 <span class="p">});</span>
-<span class="kr">const</span> <span class="nx">filtered</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">ListReceptor</span><span class="p">&gt;(</span><span class="s2">&#34;search/filtered&#34;</span><span class="p">,</span> <span class="p">{</span>
+<span class="kr">const</span> <span class="nx">filtered</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">ListReceptor</span><span class="p">&gt;(</span><span class="s2">&#34;search/filtered&#34;</span><span class="p">,</span> <span class="p">{</span>
   <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span> <span class="nx">items</span><span class="o">:</span> <span class="p">[]</span> <span class="p">},</span>
 <span class="p">});</span>
 
@@ -98,16 +98,9 @@ body { color: #f8f8f2; background-color: #272822; }
     <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">colors</span>: <span class="kt">Colors</span><span class="p">)</span> <span class="o">=&gt;</span>
       <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">filtered</span><span class="p">,</span> <span class="p">{</span> <span class="nx">items</span>: <span class="kt">filter</span><span class="p">(</span><span class="nx">colors</span><span class="p">,</span> <span class="nx">value</span><span class="p">),</span> <span class="nx">form</span> <span class="p">})</span>
     <span class="p">);</span>
-  <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">filtered</span><span class="p">);</span>
 <span class="p">});</span>
 
-<span class="nx">pureLit</span><span class="p">(</span><span class="s2">&#34;search-app&#34;</span><span class="p">,</span> <span class="p">(</span><span class="nx">element</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kr">const</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">useReceptor</span><span class="p">(</span><span class="nx">element</span><span class="p">,</span> <span class="nx">filtered</span><span class="p">);</span>
-
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">results</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">html</span><span class="sb">`&lt;div&gt;Loading...&lt;/div&gt;`</span><span class="p">;</span>
-  <span class="p">}</span>
-
+<span class="nx">pureLit</span><span class="p">(</span><span class="s2">&#34;search-app&#34;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">html</span><span class="sb">`
 </span><span class="sb">    &lt;component-headline level=&#34;1&#34;&gt;Search for a color&lt;/component-headline&gt;
 </span><span class="sb">    &lt;div&gt;
