@@ -49,8 +49,5 @@
     "setupFilesAfterEnv": [
       "./src/testSetup.ts"
     ]
-  },
-  "dependencies": {
-    "kelda-js": "^0.5.1"
   }
 }
