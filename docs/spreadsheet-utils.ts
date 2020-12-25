@@ -9,11 +9,21 @@ export type Cell = {
   value: string;
 };
 
+type FuzzyCell = {
+  row?: number;
+  column?: string;
+}
+
+function saveParseInt(value : string | number | undefined) {
+  const v = (!value || value === "") ? "0" : value.toString()
+  return parseInt(v, 10)
+}
+
 export function parseField(value: string) {
   if (!isFormula(value)) throw new Error("Not a formula");
   let state: ParserState = ParserState.COLUMN;
   let result: any = [];
-  let currentField: any = {};
+  let currentField: FuzzyCell = {};
   [...value.substr(1)].forEach((char) => {
     if (char === " ") return;
     switch (state) {
@@ -22,7 +32,7 @@ export function parseField(value: string) {
         state = ParserState.ROW;
         break;
       case ParserState.ROW:
-        const value = parseInt(char, 10);
+        const value = saveParseInt(char);
         if (isNaN(value)) {
           // next operator
           result.push({...currentField});
@@ -30,7 +40,7 @@ export function parseField(value: string) {
           currentField = {};
           state = ParserState.COLUMN;
         } else {
-          currentField.row = currentField.row ? parseInt(`${currentField.row}${value}`, 10) : value
+          currentField.row = currentField.row ? saveParseInt(`${currentField.row}${value}`) : value
         }
         break;
       default:
@@ -48,7 +58,11 @@ export const isEqual = (a : Cell, b: Cell) => {
         return false;
     }
     return a.column.toUpperCase() === b.column.toUpperCase() && 
-      parseInt(a.row.toString(), 10) === parseInt(b.row.toString(), 10)
+    saveParseInt(a.row) === saveParseInt(b.row)
+}
+export const isEqualValue = (a : Cell, b: Cell) => {
+    return isEqual(a, b) &&
+      a.value === b.value
 }
 
 export const isFormula = (value: string) => value.indexOf("=") === 0;
@@ -78,11 +92,10 @@ export const calculatedField = (value: string, results?: Cell[]) => {
     .map((field: any) =>
       isString(field)
         ? field
-        : parseInt(
+        : saveParseInt(
             results?.find(
               (result) => isEqual(result, field)
-            )?.value ?? "NaN",
-            10
+            )?.value ?? field
           )
     )
     .reduce(

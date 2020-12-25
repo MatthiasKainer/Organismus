@@ -145,10 +145,10 @@ export default pureLit(
           This example contains form that can be submitted at the end.
         </blockquote>
         <blockquote>
-          <code>Organismus</code> was not designed to solve forms, however
-          there are multiple ways to solve form handling with it. This is one
-          example, which is using the hypothalamus for collecting the form data
-          and to orchestrate the validation and finally the submit.
+          <code>Organismus</code> was not designed to solve forms, however there
+          are multiple ways to solve form handling with it. This is one example,
+          which is using the hypothalamus for collecting the form data and to
+          orchestrate the validation and finally the submit.
         </blockquote>
         <div>
           <div>
@@ -156,10 +156,7 @@ export default pureLit(
           </div>
           <div>
             <component-button-list
-              .items=${[
-                "logic",
-                "ui",
-              ]}
+              .items=${["logic", "ui"]}
               .release=${activeForm}
             >
             </component-button-list>
@@ -175,9 +172,11 @@ export default pureLit(
       </component-toggle-panel>
       <component-toggle-panel name="spreadsheet" .receptor=${activePanel}>
         <blockquote>
-          The best results can be achieved with applications that have a lot of
+          Good results can be achieved with applications that have a lot of
           decoupled elements that might be related. A typical use case is a
-          spreadsheet.
+          spreadsheet. It's still limited due to the fact that javascript is 
+          a single thread language, yet working nice enough to display its 
+          features.
         </blockquote>
         <blockquote>
           This spreadsheet shows a multiway communication:
@@ -203,8 +202,16 @@ export default pureLit(
           This is a very simple implementation, and formula's (which start with
           <code>=</code>) only support selecting single columns (no numerics or
           ranges) and <code>+</code> & <code>-</code> operators (ie
-          <code>=A1+A2</code>). Click <em>Init example</em> for an example where
-          2 fields listen to changes in over a hundred different fields.
+          <code>=A1+A2</code>).
+        </blockquote>
+        <blockquote>
+          In this example, field <code>C4</code> is using a few hundred
+          fields (all values in <code>A</code>, and <code>E</code> to
+          <code>Z</code>, plus the ones in <code>B0</code>, <code>B1</code> and
+          <code>C0</code>), and the field <code>D4</code> is using <code>C4</code>
+          and <code>C0</code>. Change the fields to see how the calculated fields
+          are recalculated, and reset the counter to see how few cells needs 
+          updating on every change.
         </blockquote>
         <div>
           <div>

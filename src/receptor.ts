@@ -6,13 +6,14 @@ const newReceptor = <T>(
   parent: Parent,
   name: string,
   onlyIf?: (value: T) => boolean
-) =>
-  !organism[name].receptors.some(
+) => {
+  const key = onlyIf?.toString() || name
+  return !organism[name].receptors.some(
     (receptor) =>
       receptor.parent === parent &&
-      receptor.onlyIf?.toString() === onlyIf?.toString()
+      receptor.key === key
   );
-
+}
 export function useReceptor<T>(
   parent: Parent,
   { name }: Hormone<T>,
@@ -45,6 +46,7 @@ export function useReceptor<T>(
       parent,
     });
     organism[name].receptors.push({
+      key: onlyIf?.toString() || name,
       parent,
       onlyIf,
       onTriggered,

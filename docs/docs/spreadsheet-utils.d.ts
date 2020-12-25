@@ -5,6 +5,7 @@ export declare type Cell = {
 };
 export declare function parseField(value: string): any;
 export declare const isEqual: (a: Cell, b: Cell) => boolean;
+export declare const isEqualValue: (a: Cell, b: Cell) => boolean;
 export declare const isFormula: (value: string) => boolean;
 export declare const hasReference: (value: string, { row, column }: {
     row: number;

@@ -208,10 +208,10 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="sb">          This example contains form that can be submitted at the end.
 </span><span class="sb">        &lt;/blockquote&gt;
 </span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          &lt;code&gt;Organismus&lt;/code&gt; was not designed to solve forms, however
-</span><span class="sb">          there are multiple ways to solve form handling with it. This is one
-</span><span class="sb">          example, which is using the hypothalamus for collecting the form data
-</span><span class="sb">          and to orchestrate the validation and finally the submit.
+</span><span class="sb">          &lt;code&gt;Organismus&lt;/code&gt; was not designed to solve forms, however there
+</span><span class="sb">          are multiple ways to solve form handling with it. This is one example,
+</span><span class="sb">          which is using the hypothalamus for collecting the form data and to
+</span><span class="sb">          orchestrate the validation and finally the submit.
 </span><span class="sb">        &lt;/blockquote&gt;
 </span><span class="sb">        &lt;div&gt;
 </span><span class="sb">          &lt;div&gt;
@@ -219,10 +219,7 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="sb">          &lt;/div&gt;
 </span><span class="sb">          &lt;div&gt;
 </span><span class="sb">            &lt;component-button-list
-</span><span class="sb">              .items=</span><span class="si">${</span><span class="p">[</span>
-                <span class="s2">&#34;logic&#34;</span><span class="p">,</span>
-                <span class="s2">&#34;ui&#34;</span><span class="p">,</span>
-              <span class="p">]</span><span class="si">}</span><span class="sb">
+</span><span class="sb">              .items=</span><span class="si">${</span><span class="p">[</span><span class="s2">&#34;logic&#34;</span><span class="p">,</span> <span class="s2">&#34;ui&#34;</span><span class="p">]</span><span class="si">}</span><span class="sb">
 </span><span class="sb">              .release=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">
 </span><span class="sb">            &gt;
 </span><span class="sb">            &lt;/component-button-list&gt;
@@ -238,9 +235,11 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="sb">      &lt;/component-toggle-panel&gt;
 </span><span class="sb">      &lt;component-toggle-panel name=&#34;spreadsheet&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
 </span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          The best results can be achieved with applications that have a lot of
+</span><span class="sb">          Good results can be achieved with applications that have a lot of
 </span><span class="sb">          decoupled elements that might be related. A typical use case is a
-</span><span class="sb">          spreadsheet.
+</span><span class="sb">          spreadsheet. It&#39;s still limited due to the fact that javascript is 
+</span><span class="sb">          a single thread language, yet working nice enough to display its 
+</span><span class="sb">          features.
 </span><span class="sb">        &lt;/blockquote&gt;
 </span><span class="sb">        &lt;blockquote&gt;
 </span><span class="sb">          This spreadsheet shows a multiway communication:
@@ -266,8 +265,15 @@ body { color: #f8f8f2; background-color: #272822; }
 </span><span class="sb">          This is a very simple implementation, and formula&#39;s (which start with
 </span><span class="sb">          &lt;code&gt;=&lt;/code&gt;) only support selecting single columns (no numerics or
 </span><span class="sb">          ranges) and &lt;code&gt;+&lt;/code&gt; &amp; &lt;code&gt;-&lt;/code&gt; operators (ie
-</span><span class="sb">          &lt;code&gt;=A1+A2&lt;/code&gt;). Click &lt;em&gt;Init example&lt;/em&gt; for an example where
-</span><span class="sb">          2 fields listen to changes in over a hundred different fields.
+</span><span class="sb">          &lt;code&gt;=A1+A2&lt;/code&gt;).
+</span><span class="sb">        &lt;/blockquote&gt;
+</span><span class="sb">        &lt;blockquote&gt;
+</span><span class="sb">          In this example, field &lt;code&gt;C4&lt;/code&gt; is using a few hundred
+</span><span class="sb">          fields (all values in &lt;code&gt;A&lt;/code&gt;, and &lt;code&gt;E&lt;/code&gt; to
+</span><span class="sb">          &lt;code&gt;Z&lt;/code&gt;, plus the ones in &lt;code&gt;B0&lt;/code&gt;, &lt;code&gt;B1&lt;/code&gt; and
+</span><span class="sb">          &lt;code&gt;C0&lt;/code&gt;), and the field &lt;code&gt;D4&lt;/code&gt; is using &lt;code&gt;C4&lt;/code&gt;
+</span><span class="sb">          and &lt;code&gt;C0&lt;/code&gt;. Change the fields to see how the calculated fields
+</span><span class="sb">          are recalculated.
 </span><span class="sb">        &lt;/blockquote&gt;
 </span><span class="sb">        &lt;div&gt;
 </span><span class="sb">          &lt;div&gt;

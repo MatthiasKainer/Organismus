@@ -2,6 +2,7 @@ export type Parent = unknown
 
 export type Receptor<T> = {
     parent: Parent
+    key: string
     onlyIf?: (value: T) => boolean
     onTriggered: (value: T) => Promise<void | unknown>
 }

@@ -52,6 +52,7 @@ describe("Release Hormone", () => {
     const hormone = defineHormone<ExampleHormone>("example");
     organism["example"].receptors.push({
       parent: litElement,
+      key: "example",
       onTriggered
     });
 

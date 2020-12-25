@@ -96,10 +96,12 @@ export async function releaseHormone<T>(
   const { receptors, transformation } = organism[name];
 
   transformation && transformation(organism[name].value);
-  hypothalamus.orchestrate({ name }, organism[name].value);
+  const _value = organism[name].value
+  hypothalamus.orchestrate({ name }, _value);
+  
   await Promise.all(
     receptors.filter((receptor) => {
-      const keep = receptor.onlyIf === undefined || receptor.onlyIf(organism[name].value);
+      const keep = receptor.onlyIf === undefined || receptor.onlyIf(_value);
       debug(
         "hormone.releaseHormone",
         !keep
@@ -108,7 +110,7 @@ export async function releaseHormone<T>(
         receptor
       );
       return keep;
-    }).map((receptor) => receptor?.onTriggered(organism[name].value))
+    }).map((receptor) => receptor?.onTriggered(_value))
   );
   if (organism[name].readOnce) {
     debug(
