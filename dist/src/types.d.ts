@@ -1,14 +1,15 @@
 export declare type Parent = unknown;
 export declare type Receptor<T> = {
     parent: Parent;
-    onlyIf?: (value: T) => boolean;
-    onTriggered: (value: T) => Promise<void | unknown>;
+    key: string;
+    onlyIf?: (value: T | undefined) => boolean;
+    onTriggered: (value: T | undefined) => Promise<void | unknown> | void;
 };
 export declare type Transport<T> = {
     name: string;
     value: T;
     defaultValue: T;
-    transformation: ((value: T) => void) | undefined;
+    transformation: ((value: T | undefined) => void) | undefined;
     receptors: Receptor<T>[];
     readOnce: boolean;
 };
