@@ -4,7 +4,7 @@ export type Receptor<T> = {
     parent: Parent
     key: string
     onlyIf?: (value: T | undefined) => boolean
-    onTriggered?: (value: T | undefined) => Promise<void | unknown>
+    onTriggered: (value: T | undefined) => Promise<void | unknown> | void
 }
 
 export type Transport<T> = {

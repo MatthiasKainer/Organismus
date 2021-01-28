@@ -17,19 +17,19 @@ const newReceptor = <T>(
 export function useReceptor<T>(
   parent: Parent,
   { name }: Hormone<T>,
-  onTriggered: (value: T) => Promise<void | unknown>
+  onTriggered: (value: T) => Promise<void | unknown> | void
 ): void;
 export function useReceptor<T>(
   parent: Parent,
   { name }: Hormone<T>,
   onlyIf: (value: T) => boolean,
-  onTriggered: (value: T) => Promise<void | unknown>
+  onTriggered: (value: T) => Promise<void | unknown> | void
 ): void;
 export function useReceptor<T>(
   parent: Parent,
   { name }: Hormone<T>,
-  onlyIfOrOnTriggered: (value: T) => boolean | Promise<void | unknown>,
-  emptyOrOnTriggered?: (value: T) => Promise<void | unknown>
+  onlyIfOrOnTriggered: (value: T) => boolean | Promise<void | unknown> | void,
+  emptyOrOnTriggered?: (value: T) => Promise<void | unknown> | void
 ): void {
   const onTriggered =
     emptyOrOnTriggered ?? (onlyIfOrOnTriggered as (value: T) => Promise<void>);
