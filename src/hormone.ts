@@ -110,7 +110,7 @@ export async function releaseHormone<T>(
         receptor
       );
       return keep;
-    }).map((receptor) => receptor?.onTriggered(_value))
+    }).map((receptor) => receptor?.onTriggered ? receptor?.onTriggered(_value) : _value)
   );
   if (organism[name].readOnce) {
     debug(
