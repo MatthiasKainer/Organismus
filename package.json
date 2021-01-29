@@ -11,6 +11,7 @@
     "build:readme": "rm -rf docs/readme.html && md2html readme.md -o docs/readme.html",
     "build:code-examples": "rm -rf docs/**/*.ts.html && for file in $(ls docs/*.ts docs/form/*.ts); do ~/go/bin/chroma --style=\"monokai\" --html \"$file\" > \"$file.html\"; done",
     "build:example": "npm run build:readme && npm run build:code-examples && rollup -c rollup.example.config.js",
+    "deploy": "npm run build && git commit -am'Preparing dist for new release' && npm version patch -m 'Creating new release %s' && npm publish ",
     "test": "jest"
   },
   "author": "Matthias Kainer",

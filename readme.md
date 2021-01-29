@@ -35,6 +35,31 @@ In difference to libraries like redux it means that you don't have one global st
 
 ## Usage
 
+### Install
+
+You should do this only for testing/playing around
+
+```sh
+npm install organismus
+```
+
+### Global and scoped
+
+There is always an organism available at the global level, thats is for every application that runs under the same module tree (has the same dependency to the same organismus like the other parts of the application). 
+
+However, you can easily get a scoped version. Create one by 
+
+```js
+const scopedOrganismus = Organismus()
+scopedOrganismus.defineHormone<ExampleHormone>("example");
+scopedOrganismus.useReceptor(litElement, { "name": "example" }, onTriggered)
+  
+// When
+await scopedOrganismus.releaseHormone(hormone);
+```
+
+In the examples, only the global organismus will be used.
+
 ### Hormones and receptors
 
 The hormone is the base unit, and has to be defined first anywhere.
@@ -47,7 +72,7 @@ const hormone = defineHormone<boolean>("example");
 // with react
 export const SomeElement = () => {
   const [getState, setState] = useState(false)
-  useReceptor(element, hormone, async value => setState(value));
+  useReceptor(element, hormone, setState);
   return <p>React State: {getState()}</p>;
 }
 
@@ -55,7 +80,7 @@ export const SomeElement = () => {
 pureLit("some-element", (element) => {
   const {getState, publish} = useState(element, false)
   // define receptor
-  useReceptor(element, hormone, async value => publish(value));
+  useReceptor(element, hormone, publish);
   return html`<p>pure-lit State: ${getState()}</p>`;
 });
 

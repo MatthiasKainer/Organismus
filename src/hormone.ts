@@ -1,4 +1,4 @@
-import { organism } from "./base";
+import { Organism, organism } from "./base";
 import { hypothalamus } from "./hypothalamus";
 import { error, debug, info } from "./log";
 import { Hormone, Transport } from "./types";
@@ -26,10 +26,18 @@ export function defineSingleHormone<T>(
   return defineHormone(name, {...options, readOnce: true})
 }
 
+
 export function defineHormone<T>(
   name: string,
   options: HormoneOptions<T> = {}
 ): Hormone<T> {
+  return defineScopedHormone(organism)(name, options)
+}
+
+export const defineScopedHormone = (organism: Organism) => <T>(
+  name: string,
+  options: HormoneOptions<T> = {},
+): Hormone<T> => {
   if (organism[name] && !options.loadIfExists) {
     error("hormone.defineHormone", new Error("Hormone already created"), name);
     throw new Error("Hormone already created");
@@ -69,6 +77,12 @@ export async function releaseHormone<T>(
   hormone: Hormone<T>,
   value?: T | ((values: T) => T)
 ) {
+  return releaseScopedHormone(organism)(hormone, value)
+}
+
+export const releaseScopedHormone = (organism: Organism) => async <T> (hormone: Hormone<T>,
+  value?: T | ((values: T) => T) 
+): Promise<Transport<T>> => {
   if (!hormone) {
     error("hormone.releaseHormone", new Error("Hormone cannot be undefined"));
     throw new Error("Hormone cannot be undefined");

@@ -1,8 +1,9 @@
 import { Parent, Hormone } from "./types";
-import { organism } from "./base";
+import { Organism, organism } from "./base";
 import { error, trace, info } from "./log";
 
 const newReceptor = <T>(
+  organism: Organism,
   parent: Parent,
   name: string,
   onlyIf?: (value: T) => boolean
@@ -31,6 +32,15 @@ export function useReceptor<T>(
   onlyIfOrOnTriggered: (value: T) => boolean | Promise<void | unknown> | void,
   emptyOrOnTriggered?: (value: T) => Promise<void | unknown> | void
 ): void {
+  return useScopedReceptor(organism)(parent, {name}, onlyIfOrOnTriggered, emptyOrOnTriggered)
+}
+  
+export const useScopedReceptor = (organism: Organism) => <T>(
+  parent: Parent,
+  { name }: Hormone<T>,
+  onlyIfOrOnTriggered: (value: T) => boolean | Promise<void | unknown> | void,
+  emptyOrOnTriggered?: (value: T) => Promise<void | unknown> | void
+): void => {
   const onTriggered =
     emptyOrOnTriggered ?? (onlyIfOrOnTriggered as (value: T) => Promise<void>);
   const onlyIf: ((value: T) => boolean) | undefined = emptyOrOnTriggered
@@ -41,7 +51,7 @@ export function useReceptor<T>(
     throw new Error(`Hormone "${name}" is not defined`);
   }
 
-  if (newReceptor(parent, name, onlyIf)) {
+  if (newReceptor(organism, parent, name, onlyIf)) {
     info("receptor.useReceptor", "Pushing new receptor to hormone", name, {
       parent,
     });
