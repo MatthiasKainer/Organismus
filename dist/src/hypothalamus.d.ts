@@ -10,6 +10,9 @@ declare class Hypothalamus {
     drop<T>(hormone: Hormone<T>): void;
     drop<T>(hormone: Hormone<any>[]): void;
     dropAll(): void;
+    collect<T>(allOf: Hormone<T>, triggerOn: Hormone<T>, release: (value: {
+        [hormoneName: string]: any;
+    }) => void): void;
     orchestrate<T>(hormone: Hormone<T>, value: T): void;
 }
 export declare const hypothalamus: Hypothalamus;

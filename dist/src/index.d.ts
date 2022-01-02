@@ -1,4 +1,4 @@
-export { defineHormone, defineSingleHormone, releaseHormone } from "./hormone";
+export { defineHormone, getOrDefineHormone, defineSingleHormone, releaseHormone } from "./hormone";
 export { useReceptor } from "./receptor";
 export { hypothalamus } from "./hypothalamus";
 export * from "./types";
