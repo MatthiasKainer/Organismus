@@ -2,7 +2,7 @@ import { css } from "lit-element";
 import { State, useState } from "lit-element-state-decoupler";
 import { html } from "lit-html";
 import { LitElementWithProps, pureLit } from "pure-lit";
-import { releaseHormone, useReceptor } from "../../../src";
+import { getOrDefineHormone, releaseHormone, useReceptor } from "../../../src";
 import { resetFormElements } from "../../css";
 import {
   FormElementHoromoneValue,
@@ -12,6 +12,9 @@ import {
   ReleaseProps,
   ValidationProps,
 } from "../types";
+
+const release = getOrDefineHormone("atoms/input/release");
+const receptor = getOrDefineHormone("atoms/input/receptor");
 
 const withTrigger = (
   triggers: InputTriggerBehaviour[],
@@ -78,8 +81,8 @@ export const Input = pureLit(
       isValid: true,
       triggers: [InputTriggerBehaviour.OnSubmit],
       form: undefined,
-      release: undefined,
-      receptor: undefined,
+      release,
+      receptor,
     },
     styles: [resetFormElements,
     css`

@@ -11,6 +11,7 @@ import {
 
 import "../atoms";
 import { css } from "lit-element";
+import { getOrDefineHormone } from "../../../src";
 
 export const InputWithLabelAndValidation = pureLit(
   "molecule-input-with-label-and-validation",
@@ -61,8 +62,9 @@ export const InputWithLabelAndValidation = pureLit(
       clear: false,
       isValid: true,
       form: undefined,
-      release: undefined,
-      receptor: undefined,
+      release: getOrDefineHormone("molecules/InputWithLabelAndValidation/release"),
+      receptor: getOrDefineHormone("molecules/InputWithLabelAndValidation/receptor"),
+      triggers: [InputTriggerBehaviour.OnEnter, InputTriggerBehaviour.OnType, InputTriggerBehaviour.OnSubmit],
     },
   }
 );

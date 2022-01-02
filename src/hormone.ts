@@ -26,6 +26,12 @@ export function defineSingleHormone<T>(
   return defineHormone(name, {...options, readOnce: true})
 }
 
+export function getOrDefineHormone<T>(
+  name: string,
+  options: HormoneOptions<T> = {}
+): Hormone<T> {
+  return defineScopedHormone(organism)(name, {...options, loadIfExists: true})
+}
 
 export function defineHormone<T>(
   name: string,

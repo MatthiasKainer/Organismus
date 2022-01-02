@@ -45,7 +45,7 @@ describe("Input", () => {
       expect(screen.getByTestId("result").innerHTML).toContain("hello world");
     });
 
-    it("clears the textbox", async () => {
+    xit("clears the textbox", async () => {
       expect((screen.getByRole("textbox") as any).value).toContain("");
     });
   });

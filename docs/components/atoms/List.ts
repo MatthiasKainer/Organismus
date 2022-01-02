@@ -1,7 +1,7 @@
 import { useState } from "lit-element-state-decoupler";
 import { html } from "lit-html";
 import { LitElementWithProps, pureLit } from "pure-lit";
-import { useReceptor } from "../../../src";
+import { getOrDefineHormone, useReceptor } from "../../../src";
 import { FormProps, ListReceptor, ReceptorProps } from "../types";
 
 export const List = pureLit(
@@ -19,5 +19,5 @@ export const List = pureLit(
       ${list.getState()?.items.map((item) => html`<li>${item}</li>`)}
     </ul>`;
   },
-  { defaults: { form: "" } }
+  { defaults: { form: "", receptor: getOrDefineHormone("list") } }
 );

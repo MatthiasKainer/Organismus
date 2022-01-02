@@ -2,7 +2,7 @@ import { css } from "lit-element";
 import { useState } from "lit-element-state-decoupler";
 import { html } from "lit-html";
 import { LitElementWithProps, pureLit } from "pure-lit";
-import { useReceptor } from "../../../src";
+import { getOrDefineHormone, useReceptor } from "../../../src";
 import { ReceptorProps } from "../types";
 
 export const Panel = pureLit(
@@ -13,7 +13,7 @@ export const Panel = pureLit(
         return element.name === activePanel.getState() ? html`<slot></slot>` : html``;
     },
     {
-        defaults: { name: "" },
+        defaults: { name: "", receptor: getOrDefineHormone("panel") },
         styles: css`
         slot {
           display:block;

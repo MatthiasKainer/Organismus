@@ -73,6 +73,51 @@ describe("[hypothalamus] Given I have a hyptholamus", () => {
         })
     })
 
+    describe("When the hypothalamus has a collector receptor", () => {
+        let receiver = jest.fn()
+
+        beforeEach(() => {
+            hypothalamus.dropAll();
+            hypothalamus.collect(corticoliberin, adrenocorticotropin, receiver);
+        })
+
+        
+        it("fails if the some connection list is added multiple times", () => {
+            expect(() => hypothalamus.collect(corticoliberin, adrenocorticotropin, () => null))
+                .toThrowError(new Error("Cannot register the same list of hormones twice"))
+        })
+
+        it("does not trigger when no hormone is released", () => {
+            expect(receiver).not.toBeCalled()
+        })
+
+        it("does not trigger when only the collector hormone is released", () => {
+            releaseHormone(corticoliberin)
+            expect(receiver).not.toBeCalled()
+        })
+
+        it("triggers when only the trigger hormone is released", () => {
+            releaseHormone(adrenocorticotropin)
+            expect(receiver).toBeCalled()
+            expect(receiver).toBeCalledWith({
+                Adrenocorticotropin: undefined
+            })
+        })
+
+        it("triggers the connection when all hormones are released", () => {
+            releaseHormone(corticoliberin, true)
+            releaseHormone(corticoliberin, true)
+            releaseHormone(corticoliberin, true)
+            releaseHormone(adrenocorticotropin, true)
+            expect(receiver).toBeCalled()
+            expect(receiver).toBeCalledWith({
+                Corticoliberin: [true, true, true],
+                Adrenocorticotropin: true
+            })
+        })
+
+    })
+
     describe("when the hypothalamus has a connection with a hormone list", () => {
         let receiver = jest.fn()
 

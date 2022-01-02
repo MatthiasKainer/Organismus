@@ -1,6 +1,6 @@
 import { html } from "lit-html";
 import { pureLit, LitElementWithProps } from "pure-lit";
-import { defineHormone, releaseHormone, useReceptor } from "../../../src";
+import { defineHormone, getOrDefineHormone, releaseHormone, useReceptor } from "../../../src";
 import { resetFormElements } from "../../css";
 import { FormElementHoromoneValue, FormProps, InputProps, InputTriggerBehaviour, ReleaseProps } from "../types";
 
@@ -27,14 +27,14 @@ export const InputWithButton = pureLit(
         name="${name}"
         label="${label}"
         placeholder="${placeholder}"
-        form="${form}"
+        form="${form ?? "form"}"
         .triggers=${[InputTriggerBehaviour.OnEnter, InputTriggerBehaviour.OnSubmit]}
         .clear=${clear}
         .release=${onInputReceived}
         .receptor=${onSubmit}
       ></component-atom-input>
       <button 
-        form=${form} 
+        form=${form ?? "form"} 
         @click=${() => releaseHormone(onSubmit, {form})}>
         <slot></slot>
       </button>
@@ -47,6 +47,8 @@ export const InputWithButton = pureLit(
       placeholder: "insert value",
       clear: false,
       form: "",
+      triggers: [InputTriggerBehaviour.OnSubmit],
+      release: getOrDefineHormone("molecules/InputWithButton/release"),
     },
     styles: resetFormElements,
   }

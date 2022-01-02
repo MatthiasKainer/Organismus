@@ -1,7 +1,7 @@
 import { css, html } from "lit-element";
 import { useState } from "lit-element-state-decoupler";
 import { LitElementWithProps, pureLit } from "pure-lit";
-import { releaseHormone, useReceptor } from "../../../src";
+import { getOrDefineHormone, releaseHormone, useReceptor } from "../../../src";
 import { resetFormElements } from "../../css";
 import { ReleaseProps } from "../types";
 
@@ -24,6 +24,8 @@ export const ButtonList = pureLit(
   {
     defaults: {
       level: 1,
+      items: [],
+      release: getOrDefineHormone("atoms/button-list/release")
     },
     styles: [resetFormElements, css`.active { background-color:var(--highlight-color); }`],
   }
