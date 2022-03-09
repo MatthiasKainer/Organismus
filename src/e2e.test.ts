@@ -1,7 +1,7 @@
 import { screen } from "testing-library__dom";
-import { fixture } from "@open-wc/testing-helpers";
+import { fixture } from "@open-wc/testing";
 import { pureLit } from "pure-lit";
-import { html } from "lit-element";
+import { html } from "lit";
 import userEvent from "@testing-library/user-event";
 import { useReceptor, releaseHormone } from ".";
 import { Hormone } from "./types";

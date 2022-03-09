@@ -1,12 +1,14 @@
 <html>
 <style type="text/css">
-/* Background */ .chroma { color: #f8f8f2; background-color: #272822 }
+/* Background */ .bg { color: #f8f8f2; background-color: #272822 }
+/* PreWrapper */ .chroma { color: #f8f8f2; background-color: #272822; }
 /* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
 /* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #3c3d38 }
-/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
-/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .chroma .hl { background-color: #3c3d38 }
+/* LineNumbersTable */ .chroma .lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Line */ .chroma .line { display: flex; }
 /* Keyword */ .chroma .k { color: #66d9ef }
 /* KeywordConstant */ .chroma .kc { color: #66d9ef }
 /* KeywordDeclaration */ .chroma .kd { color: #66d9ef }
@@ -60,72 +62,72 @@
 /* GenericStrong */ .chroma .gs { font-weight: bold }
 /* GenericSubheading */ .chroma .gu { color: #75715e }
 body { color: #f8f8f2; background-color: #272822; }
-</style><body class="chroma">
-<pre class="chroma"><span class="kr">import</span> <span class="p">{</span> <span class="nx">defineHormone</span><span class="p">,</span> <span class="nx">defineSingleHormone</span><span class="p">,</span> <span class="nx">hypothalamus</span><span class="p">,</span> <span class="nx">releaseHormone</span><span class="p">,</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../../src&#34;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">Form</span><span class="p">,</span> <span class="nx">Elements</span><span class="p">,</span> <span class="nx">FormWithValue</span><span class="p">,</span> <span class="nx">ValidatedFormWithValue</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./types&#34;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">isNotEmpty</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./validators&#34;</span><span class="p">;</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">onRequestSubmit</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">Form</span><span class="p">&gt;(</span><span class="s2">&#34;form/requestSubmit&#34;</span><span class="p">);</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">onSubmit</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;(</span><span class="s2">&#34;form/submit&#34;</span><span class="p">);</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">onAborted</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;(</span><span class="s2">&#34;form/abort&#34;</span><span class="p">);</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">formElements</span><span class="o">:</span> <span class="p">{</span> <span class="p">[</span><span class="nx">hormoneName</span>: <span class="kt">string</span><span class="p">]</span><span class="o">:</span> <span class="nx">Elements</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">firstName</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">rules</span><span class="o">:</span> <span class="p">[</span><span class="nx">isNotEmpty</span><span class="p">],</span>
-    <span class="nx">onChanged</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">FormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span><span class="s2">&#34;form/field/firstName&#34;</span><span class="p">),</span>
-    <span class="nx">onValidate</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">ValidatedFormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span>
-      <span class="s2">&#34;form/validator/firstName&#34;</span>
-    <span class="p">),</span>
-  <span class="p">},</span>
-  <span class="nx">lastName</span><span class="o">:</span> <span class="p">{</span>
-    <span class="nx">rules</span><span class="o">:</span> <span class="p">[</span><span class="nx">isNotEmpty</span><span class="p">],</span>
-    <span class="nx">onChanged</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">FormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span><span class="s2">&#34;form/field/lastName&#34;</span><span class="p">),</span>
-    <span class="nx">onValidate</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">ValidatedFormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span>
-      <span class="s2">&#34;form/validator/lastName&#34;</span>
-    <span class="p">),</span>
-  <span class="p">},</span>
-<span class="p">};</span>
-<span class="kr">const</span> <span class="nx">onChangedHormones</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">formElements</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span>
-  <span class="p">({</span> <span class="nx">onChanged</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">onChanged</span>
-<span class="p">);</span>
-<span class="kr">const</span> <span class="nx">onValidatedHormones</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">formElements</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span>
-  <span class="p">({</span> <span class="nx">onValidate</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">onValidate</span>
-<span class="p">);</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">fieldIsValid</span> <span class="o">=</span> <span class="p">&lt;</span><span class="nt">T</span><span class="p">&gt;(</span><span class="nx">name</span>: <span class="kt">string</span><span class="p">,</span> <span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span>
-  <span class="nx">formElements</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">rules</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span>
-    <span class="p">(</span><span class="nx">prev</span>: <span class="kt">boolean</span><span class="p">,</span> <span class="nx">curr</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span> <span class="o">=&gt;</span>
-      <span class="o">!</span><span class="nx">prev</span> <span class="o">?</span> <span class="nx">prev</span> : <span class="kt">curr</span><span class="p">(</span><span class="nx">value</span><span class="p">),</span>
-    <span class="kc">true</span>
-  <span class="p">);</span>
-
-<span class="nx">hypothalamus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">onChangedHormones</span><span class="p">,</span> <span class="p">(</span><span class="nx">fields</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">fields</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(({</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">form</span> <span class="p">}</span><span class="o">:</span> <span class="nx">FormWithValue</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">formElements</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">onValidate</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">value</span><span class="p">,</span>
-      <span class="nx">name</span><span class="p">,</span>
-      <span class="nx">form</span><span class="p">,</span>
-      <span class="nx">valid</span>: <span class="kt">fieldIsValid</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">),</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
-<span class="p">});</span>
-
-<span class="nx">hypothalamus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span>
-  <span class="p">[</span><span class="nx">onRequestSubmit</span><span class="p">,</span> <span class="p">...</span><span class="nx">onValidatedHormones</span><span class="p">],</span>
-  <span class="p">(</span><span class="nx">fieldsPerValidation</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="kr">const</span> <span class="p">{</span> <span class="nx">form</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">fieldsPerValidation</span><span class="p">[</span><span class="s2">&#34;form/requestSubmit&#34;</span><span class="p">];</span>
-    <span class="k">delete</span> <span class="nx">fieldsPerValidation</span><span class="p">[</span><span class="s2">&#34;form/requestSubmit&#34;</span><span class="p">];</span>
-    <span class="kr">const</span> <span class="nx">fields</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">fieldsPerValidation</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">fields</span><span class="p">.</span><span class="nx">every</span><span class="p">((</span><span class="nx">field</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">field</span><span class="p">.</span><span class="nx">valid</span><span class="p">))</span> <span class="p">{</span>
-      <span class="k">return</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">onSubmit</span><span class="p">,</span> <span class="p">{</span> <span class="nx">form</span> <span class="p">});</span>
-    <span class="p">}</span>
-    <span class="kr">const</span> <span class="nx">invalidFields</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">field</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">field</span><span class="p">.</span><span class="nx">valid</span><span class="p">);</span>
-    <span class="k">return</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">onAborted</span><span class="p">,</span> <span class="p">{</span>
-      <span class="nx">form</span><span class="p">,</span>
-      <span class="nx">errors</span>: <span class="kt">invalidFields.map</span><span class="p">((</span><span class="nx">field</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="sb">`Field </span><span class="si">${</span><span class="nx">field</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb"> is not valid`</span><span class="p">),</span>
-    <span class="p">});</span>
-  <span class="p">}</span>
-<span class="p">);</span>
-</pre>
+</style><body class="bg">
+<pre tabindex="0" class="chroma"><code><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">defineHormone</span><span class="p">,</span> <span class="nx">defineSingleHormone</span><span class="p">,</span> <span class="nx">hypothalamus</span><span class="p">,</span> <span class="nx">releaseHormone</span><span class="p">,</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../../src&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">Form</span><span class="p">,</span> <span class="nx">Elements</span><span class="p">,</span> <span class="nx">FormWithValue</span><span class="p">,</span> <span class="nx">ValidatedFormWithValue</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./types&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">isNotEmpty</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./validators&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">onRequestSubmit</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">Form</span><span class="p">&gt;(</span><span class="s2">&#34;form/requestSubmit&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">onSubmit</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;(</span><span class="s2">&#34;form/submit&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">onAborted</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;(</span><span class="s2">&#34;form/abort&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">formElements</span><span class="o">:</span> <span class="p">{</span> <span class="p">[</span><span class="nx">hormoneName</span>: <span class="kt">string</span><span class="p">]</span><span class="o">:</span> <span class="nx">Elements</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;</span> <span class="p">}</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">firstName</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rules</span><span class="o">:</span> <span class="p">[</span><span class="nx">isNotEmpty</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onChanged</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">FormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span><span class="s2">&#34;form/field/firstName&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onValidate</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">ValidatedFormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;form/validator/firstName&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">lastName</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">rules</span><span class="o">:</span> <span class="p">[</span><span class="nx">isNotEmpty</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onChanged</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">FormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span><span class="s2">&#34;form/field/lastName&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">onValidate</span>: <span class="kt">defineHormone</span><span class="p">&lt;</span><span class="nt">ValidatedFormWithValue</span><span class="err">&lt;</span><span class="na">string</span><span class="p">&gt;</span><span class="o">&gt;</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;form/validator/lastName&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">onChangedHormones</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">formElements</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="p">({</span> <span class="nx">onChanged</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">onChanged</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">onValidatedHormones</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">formElements</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="p">({</span> <span class="nx">onValidate</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="nx">onValidate</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">fieldIsValid</span> <span class="o">=</span> <span class="p">&lt;</span><span class="nt">T</span><span class="p">&gt;(</span><span class="nx">name</span>: <span class="kt">string</span><span class="p">,</span> <span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">formElements</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">rules</span><span class="p">.</span><span class="nx">reduce</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="nx">prev</span>: <span class="kt">boolean</span><span class="p">,</span> <span class="nx">curr</span><span class="o">:</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">T</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="kr">boolean</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="o">!</span><span class="nx">prev</span> <span class="o">?</span> <span class="nx">prev</span> : <span class="kt">curr</span><span class="p">(</span><span class="nx">value</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">hypothalamus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">onChangedHormones</span><span class="p">,</span> <span class="p">(</span><span class="nx">fields</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">fields</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(({</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">form</span> <span class="p">}</span><span class="o">:</span> <span class="nx">FormWithValue</span><span class="p">&lt;</span><span class="nt">any</span><span class="p">&gt;)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">formElements</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">onValidate</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">value</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">name</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">form</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">valid</span>: <span class="kt">fieldIsValid</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">value</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">hypothalamus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="p">[</span><span class="nx">onRequestSubmit</span><span class="p">,</span> <span class="p">...</span><span class="nx">onValidatedHormones</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="p">(</span><span class="nx">fieldsPerValidation</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="p">{</span> <span class="nx">form</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">fieldsPerValidation</span><span class="p">[</span><span class="s2">&#34;form/requestSubmit&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="nx">fieldsPerValidation</span><span class="p">[</span><span class="s2">&#34;form/requestSubmit&#34;</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">fields</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">fieldsPerValidation</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">fields</span><span class="p">.</span><span class="nx">every</span><span class="p">((</span><span class="nx">field</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">field</span><span class="p">.</span><span class="nx">valid</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">onSubmit</span><span class="p">,</span> <span class="p">{</span> <span class="nx">form</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">invalidFields</span> <span class="o">=</span> <span class="nx">fields</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">field</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">!</span><span class="nx">field</span><span class="p">.</span><span class="nx">valid</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">onAborted</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">form</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">errors</span>: <span class="kt">invalidFields.map</span><span class="p">((</span><span class="nx">field</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="sb">`Field </span><span class="si">${</span><span class="nx">field</span><span class="p">.</span><span class="nx">name</span><span class="si">}</span><span class="sb"> is not valid`</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span></code></pre>
 </body>
 </html>

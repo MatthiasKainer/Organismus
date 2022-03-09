@@ -1,13 +1,13 @@
 import { screen, waitFor } from "testing-library__dom";
 import { fixture } from "@open-wc/testing-helpers";
 import userEvent from "@testing-library/user-event";
-import { html } from "lit-html";
+import { html } from "lit";
 import { pureLit } from "pure-lit";
 import { InputTriggerBehaviour } from "..";
 import { Hormone, defineHormone, useReceptor } from "../../../src";
 
 import "./Input";
-import { LitElement } from "lit-element";
+import { LitElement } from "lit";
 import { FormElementHoromoneValue } from "../types";
 import { useState } from "lit-element-state-decoupler";
 

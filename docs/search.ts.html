@@ -1,12 +1,14 @@
 <html>
 <style type="text/css">
-/* Background */ .chroma { color: #f8f8f2; background-color: #272822 }
+/* Background */ .bg { color: #f8f8f2; background-color: #272822 }
+/* PreWrapper */ .chroma { color: #f8f8f2; background-color: #272822; }
 /* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
 /* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #3c3d38 }
-/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
-/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .chroma .hl { background-color: #3c3d38 }
+/* LineNumbersTable */ .chroma .lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Line */ .chroma .line { display: flex; }
 /* Keyword */ .chroma .k { color: #66d9ef }
 /* KeywordConstant */ .chroma .kc { color: #66d9ef }
 /* KeywordDeclaration */ .chroma .kd { color: #66d9ef }
@@ -60,68 +62,68 @@
 /* GenericStrong */ .chroma .gs { font-weight: bold }
 /* GenericSubheading */ .chroma .gu { color: #75715e }
 body { color: #f8f8f2; background-color: #272822; }
-</style><body class="chroma">
-<pre class="chroma"><span class="kr">import</span> <span class="p">{</span> <span class="nx">pureLit</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;pure-lit&#34;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">html</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element&#34;</span><span class="p">;</span>
-
-<span class="kr">import</span> <span class="s2">&#34;./components&#34;</span><span class="p">;</span>
-
-<span class="kr">import</span> <span class="p">{</span>
-  <span class="nx">defineHormone</span><span class="p">,</span>
-  <span class="nx">hypothalamus</span><span class="p">,</span>
-  <span class="nx">releaseHormone</span><span class="p">,</span>
-<span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">ListReceptor</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./components&#34;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">defineSingleHormone</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src/hormone&#34;</span><span class="p">;</span>
-
-<span class="kr">const</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">(</span><span class="s2">&#34;search/query&#34;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="nx">form</span>: <span class="kt">undefined</span> <span class="p">},</span>
-<span class="p">});</span>
-<span class="kr">const</span> <span class="nx">filtered</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">ListReceptor</span><span class="p">&gt;(</span><span class="s2">&#34;search/filtered&#34;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span> <span class="nx">items</span><span class="o">:</span> <span class="p">[]</span> <span class="p">},</span>
-<span class="p">});</span>
-
-<span class="kr">type</span> <span class="nx">Colors</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="p">[</span><span class="nx">name</span>: <span class="kt">string</span><span class="p">]</span><span class="o">:</span> <span class="kt">string</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="kr">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">colors</span>: <span class="kt">Colors</span><span class="p">,</span> <span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span>
-  <span class="nb">Object</span><span class="p">.</span><span class="nx">entries</span><span class="p">(</span><span class="nx">colors</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">filter</span><span class="p">(</span>
-      <span class="p">([</span><span class="nx">key</span><span class="p">])</span> <span class="o">=&gt;</span> <span class="nx">key</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">value</span><span class="o">?</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">??</span> <span class="s2">&#34;_&#34;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="p">)</span>
-    <span class="p">.</span><span class="nx">map</span><span class="p">(([</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">])</span> <span class="o">=&gt;</span> <span class="sb">`</span><span class="si">${</span><span class="nx">key</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
-
-<span class="nx">hypothalamus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="p">({</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">form</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="nx">fetch</span><span class="p">(</span><span class="s2">&#34;colors.json&#34;</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
-    <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">colors</span>: <span class="kt">Colors</span><span class="p">)</span> <span class="o">=&gt;</span>
-      <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">filtered</span><span class="p">,</span> <span class="p">{</span> <span class="nx">items</span>: <span class="kt">filter</span><span class="p">(</span><span class="nx">colors</span><span class="p">,</span> <span class="nx">value</span><span class="p">),</span> <span class="nx">form</span> <span class="p">})</span>
-    <span class="p">);</span>
-<span class="p">});</span>
-
-<span class="nx">pureLit</span><span class="p">(</span><span class="s2">&#34;search-app&#34;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">html</span><span class="sb">`
-</span><span class="sb">    &lt;component-headline level=&#34;1&#34;&gt;Search for a color&lt;/component-headline&gt;
-</span><span class="sb">    &lt;div&gt;
-</span><span class="sb">      &lt;molecule-input-with-button
-</span><span class="sb">        form=&#34;search-colors&#34;
-</span><span class="sb">        .release=</span><span class="si">${</span><span class="nx">query</span><span class="si">}</span><span class="sb">
-</span><span class="sb">        label=&#34;search&#34;
-</span><span class="sb">        placeholder=&#34;insert a color name&#34;
-</span><span class="sb">      &gt;
-</span><span class="sb">        Search
-</span><span class="sb">      &lt;/molecule-input-with-button&gt;
-</span><span class="sb">    &lt;/div&gt;
-</span><span class="sb">    &lt;component-headline level=&#34;2&#34;&gt;Results&lt;/component-headline&gt;
-</span><span class="sb">    &lt;div&gt;
-</span><span class="sb">      &lt;component-list
-</span><span class="sb">        form=&#34;search-colors&#34;
-</span><span class="sb">        .receptor=</span><span class="si">${</span><span class="nx">filtered</span><span class="si">}</span><span class="sb">
-</span><span class="sb">      &gt;&lt;/component-list&gt;
-</span><span class="sb">    &lt;/div&gt;
-</span><span class="sb">  `</span><span class="p">;</span>
-<span class="p">});</span>
-</pre>
+</style><body class="bg">
+<pre tabindex="0" class="chroma"><code><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">pureLit</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;pure-lit&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">html</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="s2">&#34;./components&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">defineHormone</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">hypothalamus</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">releaseHormone</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ListReceptor</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;./components&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">defineSingleHormone</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src/hormone&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">query</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">(</span><span class="s2">&#34;search/query&#34;</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span> <span class="nx">value</span><span class="o">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="nx">form</span>: <span class="kt">undefined</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">filtered</span> <span class="o">=</span> <span class="nx">defineSingleHormone</span><span class="p">&lt;</span><span class="nt">ListReceptor</span><span class="p">&gt;(</span><span class="s2">&#34;search/filtered&#34;</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">defaultValue</span><span class="o">:</span> <span class="p">{</span> <span class="nx">items</span><span class="o">:</span> <span class="p">[]</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">type</span> <span class="nx">Colors</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="p">[</span><span class="nx">name</span>: <span class="kt">string</span><span class="p">]</span><span class="o">:</span> <span class="kt">string</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">filter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">colors</span>: <span class="kt">Colors</span><span class="p">,</span> <span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">Object</span><span class="p">.</span><span class="nx">entries</span><span class="p">(</span><span class="nx">colors</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">filter</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="p">([</span><span class="nx">key</span><span class="p">])</span> <span class="o">=&gt;</span> <span class="nx">key</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">value</span><span class="o">?</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span> <span class="o">??</span> <span class="s2">&#34;_&#34;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">map</span><span class="p">(([</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">])</span> <span class="o">=&gt;</span> <span class="sb">`</span><span class="si">${</span><span class="nx">key</span><span class="si">}</span><span class="sb">: </span><span class="si">${</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">hypothalamus</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="nx">query</span><span class="p">,</span> <span class="p">({</span> <span class="nx">value</span><span class="p">,</span> <span class="nx">form</span> <span class="p">})</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fetch</span><span class="p">(</span><span class="s2">&#34;colors.json&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">colors</span>: <span class="kt">Colors</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">releaseHormone</span><span class="p">(</span><span class="nx">filtered</span><span class="p">,</span> <span class="p">{</span> <span class="nx">items</span>: <span class="kt">filter</span><span class="p">(</span><span class="nx">colors</span><span class="p">,</span> <span class="nx">value</span><span class="p">),</span> <span class="nx">form</span> <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">pureLit</span><span class="p">(</span><span class="s2">&#34;search-app&#34;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">html</span><span class="sb">`
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;component-headline level=&#34;1&#34;&gt;Search for a color&lt;/component-headline&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;molecule-input-with-button
+</span></span></span><span class="line"><span class="cl"><span class="sb">        form=&#34;search-colors&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        .release=</span><span class="si">${</span><span class="nx">query</span><span class="si">}</span><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">        label=&#34;search&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        placeholder=&#34;insert a color name&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        Search
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/molecule-input-with-button&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;component-headline level=&#34;2&#34;&gt;Results&lt;/component-headline&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-list
+</span></span></span><span class="line"><span class="cl"><span class="sb">        form=&#34;search-colors&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        .receptor=</span><span class="si">${</span><span class="nx">filtered</span><span class="si">}</span><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &gt;&lt;/component-list&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">    &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">  `</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre>
 </body>
 </html>

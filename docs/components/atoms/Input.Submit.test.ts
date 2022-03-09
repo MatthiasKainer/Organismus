@@ -1,7 +1,7 @@
 import { screen, waitFor } from "testing-library__dom";
 import { fixture } from "@open-wc/testing-helpers";
 import userEvent from "@testing-library/user-event";
-import { html } from "lit-html";
+import { html } from "lit";
 import { pureLit } from "pure-lit";
 import { InputTriggerBehaviour } from "..";
 import {
@@ -12,7 +12,7 @@ import {
 } from "../../../src";
 
 import "./Input";
-import { LitElement } from "lit-element";
+import { LitElement } from "lit";
 import { FormElementHoromoneValue, FormProps } from "../types";
 import { defineSingleHormone } from "../../../src";
 import { useState } from "lit-element-state-decoupler";

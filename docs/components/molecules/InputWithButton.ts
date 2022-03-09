@@ -1,4 +1,4 @@
-import { html } from "lit-html";
+import { html } from "lit";
 import { pureLit, LitElementWithProps } from "pure-lit";
 import { defineHormone, getOrDefineHormone, releaseHormone, useReceptor } from "../../../src";
 import { resetFormElements } from "../../css";

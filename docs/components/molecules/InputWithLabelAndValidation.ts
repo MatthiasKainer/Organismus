@@ -1,4 +1,4 @@
-import { html } from "lit-html";
+import { html } from "lit";
 import { pureLit, LitElementWithProps } from "pure-lit";
 import {
   FormElementHoromoneValue,
@@ -10,7 +10,7 @@ import {
 } from "../types";
 
 import "../atoms";
-import { css } from "lit-element";
+import { css } from "lit";
 import { getOrDefineHormone } from "../../../src";
 
 export const InputWithLabelAndValidation = pureLit(

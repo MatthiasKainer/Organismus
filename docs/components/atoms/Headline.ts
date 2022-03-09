@@ -1,4 +1,4 @@
-import { html } from "lit-html";
+import { html } from "lit";
 import { pureLit } from "pure-lit";
 
 type HeadlineProps = {

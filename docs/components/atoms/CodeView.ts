@@ -1,7 +1,7 @@
-import { css } from "lit-element";
+import { css } from "lit";
 import { useOnce } from "lit-element-effect";
 import { useState } from "lit-element-state-decoupler";
-import { html } from "lit-html";
+import { html } from "lit";
 import { unsafeHTML } from "lit-html/directives/unsafe-html";
 import { LitElementWithProps, pureLit } from "pure-lit";
 

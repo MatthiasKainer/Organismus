@@ -1,4 +1,4 @@
-import { css, html } from "lit-element";
+import { css, html } from "lit";
 import { pureLit } from "pure-lit";
 import { defineHormone, LOGLEVEL, setLoglevel } from "../src";
 

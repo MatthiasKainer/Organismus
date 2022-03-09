@@ -1,12 +1,14 @@
 <html>
 <style type="text/css">
-/* Background */ .chroma { color: #f8f8f2; background-color: #272822 }
+/* Background */ .bg { color: #f8f8f2; background-color: #272822 }
+/* PreWrapper */ .chroma { color: #f8f8f2; background-color: #272822; }
 /* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
 /* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #3c3d38 }
-/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
-/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .chroma .hl { background-color: #3c3d38 }
+/* LineNumbersTable */ .chroma .lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Line */ .chroma .line { display: flex; }
 /* Keyword */ .chroma .k { color: #66d9ef }
 /* KeywordConstant */ .chroma .kc { color: #66d9ef }
 /* KeywordDeclaration */ .chroma .kd { color: #66d9ef }
@@ -60,114 +62,114 @@
 /* GenericStrong */ .chroma .gs { font-weight: bold }
 /* GenericSubheading */ .chroma .gu { color: #75715e }
 body { color: #f8f8f2; background-color: #272822; }
-</style><body class="chroma">
-<pre class="chroma"><span class="kr">enum</span> <span class="nx">ParserState</span> <span class="p">{</span>
-  <span class="nx">COLUMN</span><span class="p">,</span>
-  <span class="nx">ROW</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="kr">export</span> <span class="kr">type</span> <span class="nx">Cell</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">row</span>: <span class="kt">number</span><span class="p">;</span>
-  <span class="nx">column</span>: <span class="kt">string</span><span class="p">;</span>
-  <span class="nx">value</span>: <span class="kt">string</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="kr">type</span> <span class="nx">FuzzyCell</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="nx">row?</span>: <span class="kt">number</span><span class="p">;</span>
-  <span class="nx">column?</span>: <span class="kt">string</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kd">function</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">value</span> : <span class="kt">string</span> <span class="o">|</span> <span class="kt">number</span> <span class="o">|</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kr">const</span> <span class="nx">v</span> <span class="o">=</span> <span class="p">(</span><span class="o">!</span><span class="nx">value</span> <span class="o">||</span> <span class="nx">value</span> <span class="o">===</span> <span class="s2">&#34;&#34;</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&#34;0&#34;</span> <span class="o">:</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
-  <span class="k">return</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="p">}</span>
-
-<span class="kr">export</span> <span class="kd">function</span> <span class="nx">parseField</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isFormula</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&#34;Not a formula&#34;</span><span class="p">);</span>
-  <span class="kd">let</span> <span class="nx">state</span>: <span class="kt">ParserState</span> <span class="o">=</span> <span class="nx">ParserState</span><span class="p">.</span><span class="nx">COLUMN</span><span class="p">;</span>
-  <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">any</span> <span class="o">=</span> <span class="p">[];</span>
-  <span class="kd">let</span> <span class="nx">currentField</span>: <span class="kt">FuzzyCell</span> <span class="o">=</span> <span class="p">{};</span>
-  <span class="p">[...</span><span class="nx">value</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)].</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">char</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">char</span> <span class="o">===</span> <span class="s2">&#34; &#34;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
-    <span class="k">switch</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
-      <span class="k">case</span> <span class="nx">ParserState.COLUMN</span>:
-        <span class="kt">currentField.column</span> <span class="o">=</span> <span class="nx">char</span><span class="p">;</span>
-        <span class="nx">state</span> <span class="o">=</span> <span class="nx">ParserState</span><span class="p">.</span><span class="nx">ROW</span><span class="p">;</span>
-        <span class="k">break</span><span class="p">;</span>
-      <span class="k">case</span> <span class="nx">ParserState.ROW</span>:
-        <span class="kt">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">char</span><span class="p">);</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
-          <span class="c1">// next operator
-</span><span class="c1"></span>          <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">({...</span><span class="nx">currentField</span><span class="p">});</span>
-          <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">char</span><span class="p">);</span>
-          <span class="nx">currentField</span> <span class="o">=</span> <span class="p">{};</span>
-          <span class="nx">state</span> <span class="o">=</span> <span class="nx">ParserState</span><span class="p">.</span><span class="nx">COLUMN</span><span class="p">;</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nx">currentField</span><span class="p">.</span><span class="nx">row</span> <span class="o">=</span> <span class="nx">currentField</span><span class="p">.</span><span class="nx">row</span> <span class="o">?</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">currentField</span><span class="p">.</span><span class="nx">row</span><span class="si">}${</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span> <span class="o">:</span> <span class="nx">value</span>
-        <span class="p">}</span>
-        <span class="k">break</span><span class="p">;</span>
-      <span class="k">default</span><span class="o">:</span>
-        <span class="k">break</span><span class="p">;</span>
-    <span class="p">}</span>
-  <span class="p">});</span>
-  <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">({...</span><span class="nx">currentField</span><span class="p">});</span>
-  <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">isEqual</span> <span class="o">=</span> <span class="p">(</span><span class="nx">a</span> : <span class="kt">Cell</span><span class="p">,</span> <span class="nx">b</span>: <span class="kt">Cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">a</span> <span class="o">||</span> <span class="o">!</span><span class="nx">a</span><span class="p">.</span><span class="nx">column</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="o">!</span><span class="nx">b</span> <span class="o">||</span> <span class="o">!</span><span class="nx">b</span><span class="p">.</span><span class="nx">column</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">b</span> <span class="o">||</span> <span class="o">!</span><span class="nx">b</span><span class="p">.</span><span class="nx">column</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">column</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">===</span> <span class="nx">b</span><span class="p">.</span><span class="nx">column</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">&amp;&amp;</span> 
-    <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">row</span><span class="p">)</span> <span class="o">===</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">row</span><span class="p">)</span>
-<span class="p">}</span>
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">isEqualValue</span> <span class="o">=</span> <span class="p">(</span><span class="nx">a</span> : <span class="kt">Cell</span><span class="p">,</span> <span class="nx">b</span>: <span class="kt">Cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">isEqual</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
-      <span class="nx">a</span><span class="p">.</span><span class="nx">value</span> <span class="o">===</span> <span class="nx">b</span><span class="p">.</span><span class="nx">value</span>
-<span class="p">}</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">isFormula</span> <span class="o">=</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&#34;=&#34;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">hasReference</span> <span class="o">=</span> <span class="p">(</span>
-  <span class="nx">value</span>: <span class="kt">string</span><span class="p">,</span>
-  <span class="p">{</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span> <span class="p">}</span><span class="o">:</span> <span class="p">{</span> <span class="nx">row</span>: <span class="kt">number</span><span class="p">;</span> <span class="nx">column</span>: <span class="kt">string</span> <span class="p">}</span>
-<span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">column</span><span class="si">}${</span><span class="nx">row</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">isString</span> <span class="o">=</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span>
-  <span class="k">typeof</span> <span class="nx">value</span> <span class="o">===</span> <span class="s2">&#34;string&#34;</span> <span class="o">||</span> <span class="nx">value</span> <span class="k">instanceof</span> <span class="nb">String</span><span class="p">;</span>
-
-<span class="kr">export</span> <span class="kr">const</span> <span class="nx">calculatedField</span> <span class="o">=</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">,</span> <span class="nx">results?</span>: <span class="kt">Cell</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kd">let</span> <span class="nx">op</span> <span class="o">=</span> <span class="s2">&#34;+&#34;</span><span class="p">;</span>
-  <span class="kr">const</span> <span class="nx">math</span> <span class="o">=</span> <span class="p">(</span><span class="nx">total</span>: <span class="kt">number</span><span class="p">,</span> <span class="nx">next</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">isInteger</span><span class="p">(</span><span class="nx">next</span><span class="p">))</span> <span class="p">{</span>
-      <span class="k">switch</span> <span class="p">(</span><span class="nx">op</span><span class="p">)</span> <span class="p">{</span>
-        <span class="k">case</span> <span class="s2">&#34;+&#34;</span><span class="o">:</span>
-          <span class="k">return</span> <span class="nx">total</span> <span class="o">+</span> <span class="nx">next</span><span class="p">;</span>
-        <span class="k">case</span> <span class="s2">&#34;-&#34;</span><span class="o">:</span>
-          <span class="k">return</span> <span class="nx">total</span> <span class="o">-</span> <span class="nx">next</span><span class="p">;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-    <span class="k">return</span> <span class="nb">Number</span><span class="p">.</span><span class="kc">NaN</span><span class="p">;</span>
-  <span class="p">};</span>
-  <span class="kr">const</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">parseField</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">field</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span>
-      <span class="nx">isString</span><span class="p">(</span><span class="nx">field</span><span class="p">)</span>
-        <span class="o">?</span> <span class="nx">field</span>
-        : <span class="kt">saveParseInt</span><span class="p">(</span>
-            <span class="nx">results</span><span class="o">?</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
-              <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">isEqual</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">field</span><span class="p">)</span>
-            <span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="nx">value</span> <span class="o">??</span> <span class="nx">field</span>
-          <span class="p">)</span>
-    <span class="p">)</span>
-    <span class="p">.</span><span class="nx">reduce</span><span class="p">(</span>
-      <span class="p">(</span><span class="nx">prev</span>: <span class="kt">number</span><span class="p">,</span> <span class="nx">curr</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span>
-        <span class="nx">isString</span><span class="p">(</span><span class="nx">curr</span><span class="p">)</span> <span class="o">?</span> <span class="p">((</span><span class="nx">op</span> <span class="o">=</span> <span class="nx">curr</span><span class="p">),</span> <span class="nx">prev</span><span class="p">)</span> <span class="o">:</span> <span class="nx">math</span><span class="p">(</span><span class="nx">prev</span><span class="p">,</span> <span class="nx">curr</span><span class="p">),</span>
-      <span class="mi">0</span>
-    <span class="p">);</span>
-  <span class="k">return</span> <span class="nx">parsed</span><span class="p">;</span>
-<span class="p">};</span>
-</pre>
+</style><body class="bg">
+<pre tabindex="0" class="chroma"><code><span class="line"><span class="cl"><span class="kr">enum</span> <span class="nx">ParserState</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">COLUMN</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ROW</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">type</span> <span class="nx">Cell</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">row</span>: <span class="kt">number</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">column</span>: <span class="kt">string</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">value</span>: <span class="kt">string</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">type</span> <span class="nx">FuzzyCell</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">row?</span>: <span class="kt">number</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">column?</span>: <span class="kt">string</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">value</span> : <span class="kt">string</span> <span class="o">|</span> <span class="kt">number</span> <span class="o">|</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">v</span> <span class="o">=</span> <span class="p">(</span><span class="o">!</span><span class="nx">value</span> <span class="o">||</span> <span class="nx">value</span> <span class="o">===</span> <span class="s2">&#34;&#34;</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&#34;0&#34;</span> <span class="o">:</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">parseField</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isFormula</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s2">&#34;Not a formula&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">let</span> <span class="nx">state</span>: <span class="kt">ParserState</span> <span class="o">=</span> <span class="nx">ParserState</span><span class="p">.</span><span class="nx">COLUMN</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">let</span> <span class="nx">result</span>: <span class="kt">any</span> <span class="o">=</span> <span class="p">[];</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">let</span> <span class="nx">currentField</span>: <span class="kt">FuzzyCell</span> <span class="o">=</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">  <span class="p">[...</span><span class="nx">value</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)].</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">char</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">char</span> <span class="o">===</span> <span class="s2">&#34; &#34;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">(</span><span class="nx">state</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="nx">ParserState.COLUMN</span>:
+</span></span><span class="line"><span class="cl">        <span class="kt">currentField.column</span> <span class="o">=</span> <span class="nx">char</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">state</span> <span class="o">=</span> <span class="nx">ParserState</span><span class="p">.</span><span class="nx">ROW</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="nx">ParserState.ROW</span>:
+</span></span><span class="line"><span class="cl">        <span class="kt">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">char</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// next operator
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">({...</span><span class="nx">currentField</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">char</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">currentField</span> <span class="o">=</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">state</span> <span class="o">=</span> <span class="nx">ParserState</span><span class="p">.</span><span class="nx">COLUMN</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">currentField</span><span class="p">.</span><span class="nx">row</span> <span class="o">=</span> <span class="nx">currentField</span><span class="p">.</span><span class="nx">row</span> <span class="o">?</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">currentField</span><span class="p">.</span><span class="nx">row</span><span class="si">}${</span><span class="nx">value</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span> <span class="o">:</span> <span class="nx">value</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">default</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">({...</span><span class="nx">currentField</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">isEqual</span> <span class="o">=</span> <span class="p">(</span><span class="nx">a</span> : <span class="kt">Cell</span><span class="p">,</span> <span class="nx">b</span>: <span class="kt">Cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">a</span> <span class="o">||</span> <span class="o">!</span><span class="nx">a</span><span class="p">.</span><span class="nx">column</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="o">!</span><span class="nx">b</span> <span class="o">||</span> <span class="o">!</span><span class="nx">b</span><span class="p">.</span><span class="nx">column</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">b</span> <span class="o">||</span> <span class="o">!</span><span class="nx">b</span><span class="p">.</span><span class="nx">column</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">column</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">===</span> <span class="nx">b</span><span class="p">.</span><span class="nx">column</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">&amp;&amp;</span> 
+</span></span><span class="line"><span class="cl">    <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">a</span><span class="p">.</span><span class="nx">row</span><span class="p">)</span> <span class="o">===</span> <span class="nx">saveParseInt</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">row</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">isEqualValue</span> <span class="o">=</span> <span class="p">(</span><span class="nx">a</span> : <span class="kt">Cell</span><span class="p">,</span> <span class="nx">b</span>: <span class="kt">Cell</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">isEqual</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">a</span><span class="p">.</span><span class="nx">value</span> <span class="o">===</span> <span class="nx">b</span><span class="p">.</span><span class="nx">value</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">isFormula</span> <span class="o">=</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&#34;=&#34;</span><span class="p">)</span> <span class="o">===</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">hasReference</span> <span class="o">=</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">value</span>: <span class="kt">string</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nx">row</span><span class="p">,</span> <span class="nx">column</span> <span class="p">}</span><span class="o">:</span> <span class="p">{</span> <span class="nx">row</span>: <span class="kt">number</span><span class="p">;</span> <span class="nx">column</span>: <span class="kt">string</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">column</span><span class="si">}${</span><span class="nx">row</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">isString</span> <span class="o">=</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">typeof</span> <span class="nx">value</span> <span class="o">===</span> <span class="s2">&#34;string&#34;</span> <span class="o">||</span> <span class="nx">value</span> <span class="k">instanceof</span> <span class="nb">String</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">calculatedField</span> <span class="o">=</span> <span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">,</span> <span class="nx">results?</span>: <span class="kt">Cell</span><span class="p">[])</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">let</span> <span class="nx">op</span> <span class="o">=</span> <span class="s2">&#34;+&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">math</span> <span class="o">=</span> <span class="p">(</span><span class="nx">total</span>: <span class="kt">number</span><span class="p">,</span> <span class="nx">next</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nb">Number</span><span class="p">.</span><span class="nx">isInteger</span><span class="p">(</span><span class="nx">next</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">switch</span> <span class="p">(</span><span class="nx">op</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="s2">&#34;+&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="nx">total</span> <span class="o">+</span> <span class="nx">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">case</span> <span class="s2">&#34;-&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="nx">total</span> <span class="o">-</span> <span class="nx">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">Number</span><span class="p">.</span><span class="kc">NaN</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">parsed</span> <span class="o">=</span> <span class="nx">parseField</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">field</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">isString</span><span class="p">(</span><span class="nx">field</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">?</span> <span class="nx">field</span>
+</span></span><span class="line"><span class="cl">        : <span class="kt">saveParseInt</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">results</span><span class="o">?</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">              <span class="p">(</span><span class="nx">result</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">isEqual</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">field</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="nx">value</span> <span class="o">??</span> <span class="nx">field</span>
+</span></span><span class="line"><span class="cl">          <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">reduce</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="p">(</span><span class="nx">prev</span>: <span class="kt">number</span><span class="p">,</span> <span class="nx">curr</span>: <span class="kt">any</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">isString</span><span class="p">(</span><span class="nx">curr</span><span class="p">)</span> <span class="o">?</span> <span class="p">((</span><span class="nx">op</span> <span class="o">=</span> <span class="nx">curr</span><span class="p">),</span> <span class="nx">prev</span><span class="p">)</span> <span class="o">:</span> <span class="nx">math</span><span class="p">(</span><span class="nx">prev</span><span class="p">,</span> <span class="nx">curr</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">parsed</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre>
 </body>
 </html>

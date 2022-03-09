@@ -1,4 +1,4 @@
-import { css, html } from "lit-element";
+import { css, html } from "lit";
 import { useState } from "lit-element-state-decoupler";
 import { LitElementWithProps, pureLit } from "pure-lit";
 import { getOrDefineHormone, releaseHormone, useReceptor } from "../../../src";

@@ -1,6 +1,6 @@
-import { css } from "lit-element";
+import { css } from "lit";
 import { State, useState } from "lit-element-state-decoupler";
-import { html } from "lit-html";
+import { html } from "lit";
 import { LitElementWithProps, pureLit } from "pure-lit";
 import { getOrDefineHormone, releaseHormone, useReceptor } from "../../../src";
 import { resetFormElements } from "../../css";

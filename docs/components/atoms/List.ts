@@ -1,5 +1,5 @@
 import { useState } from "lit-element-state-decoupler";
-import { html } from "lit-html";
+import { html } from "lit";
 import { LitElementWithProps, pureLit } from "pure-lit";
 import { getOrDefineHormone, useReceptor } from "../../../src";
 import { FormProps, ListReceptor, ReceptorProps } from "../types";

@@ -1,12 +1,14 @@
 <html>
 <style type="text/css">
-/* Background */ .chroma { color: #f8f8f2; background-color: #272822 }
+/* Background */ .bg { color: #f8f8f2; background-color: #272822 }
+/* PreWrapper */ .chroma { color: #f8f8f2; background-color: #272822; }
 /* Error */ .chroma .err { color: #960050; background-color: #1e0010 }
 /* LineTableTD */ .chroma .lntd { vertical-align: top; padding: 0; margin: 0; border: 0; }
-/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; width: auto; overflow: auto; display: block; }
-/* LineHighlight */ .chroma .hl { display: block; width: 100%;background-color: #3c3d38 }
-/* LineNumbersTable */ .chroma .lnt { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
-/* LineNumbers */ .chroma .ln { margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineTable */ .chroma .lntable { border-spacing: 0; padding: 0; margin: 0; border: 0; }
+/* LineHighlight */ .chroma .hl { background-color: #3c3d38 }
+/* LineNumbersTable */ .chroma .lnt { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* LineNumbers */ .chroma .ln { white-space: pre; user-select: none; margin-right: 0.4em; padding: 0 0.4em 0 0.4em;color: #7f7f7f }
+/* Line */ .chroma .line { display: flex; }
 /* Keyword */ .chroma .k { color: #66d9ef }
 /* KeywordConstant */ .chroma .kc { color: #66d9ef }
 /* KeywordDeclaration */ .chroma .kd { color: #66d9ef }
@@ -60,249 +62,250 @@
 /* GenericStrong */ .chroma .gs { font-weight: bold }
 /* GenericSubheading */ .chroma .gu { color: #75715e }
 body { color: #f8f8f2; background-color: #272822; }
-</style><body class="chroma">
-<pre class="chroma"><span class="kr">import</span> <span class="p">{</span> <span class="nx">css</span><span class="p">,</span> <span class="nx">html</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit-element&#34;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">pureLit</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;pure-lit&#34;</span><span class="p">;</span>
-<span class="kr">import</span> <span class="p">{</span> <span class="nx">defineHormone</span><span class="p">,</span> <span class="nx">LOGLEVEL</span><span class="p">,</span> <span class="nx">setLoglevel</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
-
-<span class="kr">const</span> <span class="nx">getHashValue</span> <span class="o">=</span> <span class="p">(</span><span class="nx">key</span>: <span class="kt">string</span><span class="p">,</span> <span class="nx">orElse</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kr">const</span> <span class="p">{</span> <span class="nx">hash</span> <span class="p">}</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
-  <span class="k">if</span> <span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">orElse</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="kr">const</span> <span class="nx">values</span> <span class="o">=</span> <span class="nx">hash</span>
-    <span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34;&amp;&#34;</span><span class="p">)</span>
-    <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34;=&#34;</span><span class="p">))</span>
-    <span class="p">.</span><span class="nx">find</span><span class="p">(([</span><span class="nx">actualKey</span><span class="p">])</span> <span class="o">=&gt;</span> <span class="nx">actualKey</span> <span class="o">===</span> <span class="nx">key</span><span class="p">);</span>
-  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">values</span><span class="p">)</span> <span class="k">return</span> <span class="nx">orElse</span><span class="p">;</span>
-  <span class="kr">const</span> <span class="p">[,</span> <span class="nx">value</span><span class="p">]</span> <span class="o">=</span> <span class="nx">values</span><span class="p">;</span>
-  <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="kr">const</span> <span class="nx">loglevel</span> <span class="o">=</span> <span class="p">()</span><span class="o">:</span> <span class="nx">LOGLEVEL</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="kr">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">getHashValue</span><span class="p">(</span><span class="s2">&#34;loglevel&#34;</span><span class="p">,</span> <span class="s2">&#34;error&#34;</span><span class="p">);</span>
-  <span class="k">switch</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span> <span class="p">{</span>
-    <span class="k">case</span> <span class="s2">&#34;info&#34;</span><span class="o">:</span>
-      <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">INFO</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s2">&#34;debug&#34;</span><span class="o">:</span>
-      <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">DEBUG</span><span class="p">;</span>
-    <span class="k">case</span> <span class="s2">&#34;trace&#34;</span><span class="o">:</span>
-      <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">TRACE</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">ERROR</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="nx">setLoglevel</span><span class="p">(</span><span class="nx">loglevel</span><span class="p">());</span>
-
-<span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./simple&#34;</span><span class="p">;</span>
-<span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./twoForms&#34;</span><span class="p">;</span>
-<span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./todo&#34;</span><span class="p">;</span>
-<span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./search&#34;</span><span class="p">;</span>
-<span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./form&#34;</span><span class="p">;</span>
-<span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./spreadsheet&#34;</span><span class="p">;</span>
-
-<span class="kr">const</span> <span class="nx">activePanel</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">string</span><span class="p">&gt;(</span><span class="s2">&#34;app/panel&#34;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">defaultValue</span><span class="o">:</span> <span class="s2">&#34;readme&#34;</span><span class="p">,</span>
-<span class="p">});</span>
-<span class="kr">const</span> <span class="nx">activeForm</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">string</span><span class="p">&gt;(</span><span class="s2">&#34;app/panel/form&#34;</span><span class="p">,</span> <span class="p">{</span>
-  <span class="nx">defaultValue</span><span class="o">:</span> <span class="s2">&#34;logic&#34;</span><span class="p">,</span>
-<span class="p">});</span>
-<span class="kr">export</span> <span class="k">default</span> <span class="nx">pureLit</span><span class="p">(</span>
-  <span class="s2">&#34;example-app&#34;</span><span class="p">,</span>
-  <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">html</span><span class="sb">`
-</span><span class="sb">      &lt;header&gt;
-</span><span class="sb">        &lt;component-button-list
-</span><span class="sb">          .items=</span><span class="si">${</span><span class="p">[</span>
-            <span class="s2">&#34;readme&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;simple&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;two-receptors&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;todo&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;search&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;form&#34;</span><span class="p">,</span>
-            <span class="s2">&#34;spreadsheet&#34;</span><span class="p">,</span>
-          <span class="p">]</span><span class="si">}</span><span class="sb">
-</span><span class="sb">          .release=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">
-</span><span class="sb">        &gt;
-</span><span class="sb">        &lt;/component-button-list&gt;
-</span><span class="sb">      &lt;/header&gt;
-</span><span class="sb">      &lt;component-toggle-panel name=&#34;readme&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">        &lt;html-view file=&#34;readme&#34;&gt;&lt;/html-view&gt;
-</span><span class="sb">      &lt;/component-toggle-panel&gt;
-</span><span class="sb">      &lt;component-toggle-panel name=&#34;simple&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          A receptor does not return a global state, but what has been returned.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;simple-app&gt;&lt;/simple-app&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;code-view file=&#34;simple.ts&#34;&gt;&lt;/code-view&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">        &lt;/div&gt;
-</span><span class="sb">      &lt;/component-toggle-panel&gt;
-</span><span class="sb">
-</span><span class="sb">      &lt;component-toggle-panel name=&#34;two-receptors&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          A receptor does not return a global state, but what has been released
-</span><span class="sb">          last. That might be counterintuitive if you compare it to state hooks
-</span><span class="sb">          like
-</span><span class="sb">          &lt;code&gt;useState&lt;/code&gt;, but the reason is that a receptor really is the
-</span><span class="sb">          result of a hormone that was released. If you want to maintain the
-</span><span class="sb">          state, you will have to maintain it inside the component.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          A receptor that is explicitly filtered for a released hormone will
-</span><span class="sb">          always return undefined. In case you want to maintain your own state
-</span><span class="sb">          use this to know when the state changes.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;two-form-app&gt;&lt;/two-form-app&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;code-view file=&#34;twoForms.ts&#34;&gt;&lt;/code-view&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">        &lt;/div&gt;
-</span><span class="sb">      &lt;/component-toggle-panel&gt;
-</span><span class="sb">      &lt;component-toggle-panel name=&#34;todo&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          A simple todo app, that adds new items to a list. Unlike the first
-</span><span class="sb">          examples, this one uses a component library that is setup to work out
-</span><span class="sb">          of the box with hormones.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;todo-app&gt;&lt;/todo-app&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;code-view file=&#34;todo.ts&#34;&gt;&lt;/code-view&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">        &lt;/div&gt;
-</span><span class="sb">      &lt;/component-toggle-panel&gt;
-</span><span class="sb">      &lt;component-toggle-panel name=&#34;search&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          A search app, that loads a json result, filters it in the frontend and
-</span><span class="sb">          displays the result.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          This example is aiming to show how you can completely separate
-</span><span class="sb">          specific parts of your logic without any connection to the display or
-</span><span class="sb">          the rendering of the application.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;search-app&gt;&lt;/search-app&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;code-view file=&#34;search.ts&#34;&gt;&lt;/code-view&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">        &lt;/div&gt;
-</span><span class="sb">      &lt;/component-toggle-panel&gt;
-</span><span class="sb">      &lt;component-toggle-panel name=&#34;form&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          This example contains form that can be submitted at the end.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          &lt;code&gt;Organismus&lt;/code&gt; was not designed to solve forms, however there
-</span><span class="sb">          are multiple ways to solve form handling with it. This is one example,
-</span><span class="sb">          which is using the hypothalamus for collecting the form data and to
-</span><span class="sb">          orchestrate the validation and finally the submit.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;form-app&gt;&lt;/form-app&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;component-button-list
-</span><span class="sb">              .items=</span><span class="si">${</span><span class="p">[</span><span class="s2">&#34;logic&#34;</span><span class="p">,</span> <span class="s2">&#34;ui&#34;</span><span class="p">]</span><span class="si">}</span><span class="sb">
-</span><span class="sb">              .release=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">
-</span><span class="sb">            &gt;
-</span><span class="sb">            &lt;/component-button-list&gt;
-</span><span class="sb">
-</span><span class="sb">            &lt;component-toggle-panel name=&#34;logic&#34; .receptor=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">              &lt;code-view file=&#34;form/form.logic.ts&#34;&gt;&lt;/code-view&gt;
-</span><span class="sb">            &lt;/component-toggle-panel&gt;
-</span><span class="sb">            &lt;component-toggle-panel name=&#34;ui&#34; .receptor=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">              &lt;code-view file=&#34;form/form.ui.ts&#34;&gt;&lt;/code-view&gt;
-</span><span class="sb">            &lt;/component-toggle-panel&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">        &lt;/div&gt;
-</span><span class="sb">      &lt;/component-toggle-panel&gt;
-</span><span class="sb">      &lt;component-toggle-panel name=&#34;spreadsheet&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          Good results can be achieved with applications that have a lot of
-</span><span class="sb">          decoupled elements that might be related. A typical use case is a
-</span><span class="sb">          spreadsheet. It&#39;s still limited due to the fact that javascript is 
-</span><span class="sb">          a single thread language, yet working nice enough to display its 
-</span><span class="sb">          features.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          This spreadsheet shows a multiway communication:
-</span><span class="sb">          &lt;ol&gt;
-</span><span class="sb">            &lt;li&gt;
-</span><span class="sb">              Every cell releases a &lt;code&gt;cellChanged&lt;/code&gt; hormone if changed.
-</span><span class="sb">              A cell with a formula listens to those events, and if one of the
-</span><span class="sb">              referenced cells is changed, it updates itself
-</span><span class="sb">            &lt;/li&gt;
-</span><span class="sb">            &lt;li&gt;
-</span><span class="sb">              Every cell with a formula releases a
-</span><span class="sb">              &lt;code&gt;cellRequest&lt;/code&gt; hormone for all cells with values it
-</span><span class="sb">              needs, triggering a &lt;code&gt;cellChanged&lt;/code&gt; event for the
-</span><span class="sb">              affected cells, and read from 1.
-</span><span class="sb">            &lt;/li&gt;
-</span><span class="sb">            &lt;li&gt;
-</span><span class="sb">              Every cell listens to a &lt;code&gt;cellSet&lt;/code&gt; event, which allows
-</span><span class="sb">              setting events from the outside (by clicking the init button)
-</span><span class="sb">            &lt;/li&gt;
-</span><span class="sb">          &lt;/ol&gt;
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          This is a very simple implementation, and formula&#39;s (which start with
-</span><span class="sb">          &lt;code&gt;=&lt;/code&gt;) only support selecting single columns (no numerics or
-</span><span class="sb">          ranges) and &lt;code&gt;+&lt;/code&gt; &amp; &lt;code&gt;-&lt;/code&gt; operators (ie
-</span><span class="sb">          &lt;code&gt;=A1+A2&lt;/code&gt;).
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;blockquote&gt;
-</span><span class="sb">          In this example, field &lt;code&gt;C4&lt;/code&gt; is using a few hundred
-</span><span class="sb">          fields (all values in &lt;code&gt;A&lt;/code&gt;, and &lt;code&gt;E&lt;/code&gt; to
-</span><span class="sb">          &lt;code&gt;Z&lt;/code&gt;, plus the ones in &lt;code&gt;B0&lt;/code&gt;, &lt;code&gt;B1&lt;/code&gt; and
-</span><span class="sb">          &lt;code&gt;C0&lt;/code&gt;), and the field &lt;code&gt;D4&lt;/code&gt; is using &lt;code&gt;C4&lt;/code&gt;
-</span><span class="sb">          and &lt;code&gt;C0&lt;/code&gt;. Change the fields to see how the calculated fields
-</span><span class="sb">          are recalculated.
-</span><span class="sb">        &lt;/blockquote&gt;
-</span><span class="sb">        &lt;div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;spreadsheet-app&gt;&lt;/spreadsheet-app&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">          &lt;div&gt;
-</span><span class="sb">            &lt;code-view file=&#34;spreadsheet.ts&#34;&gt;&lt;/code-view&gt;
-</span><span class="sb">          &lt;/div&gt;
-</span><span class="sb">        &lt;/div&gt;
-</span><span class="sb">      &lt;/component-toggle-panel&gt;
-</span><span class="sb">    `</span><span class="p">;</span>
-  <span class="p">},</span>
-  <span class="p">{</span>
-    <span class="nx">styles</span><span class="o">:</span> <span class="p">[</span>
-      <span class="nx">css</span><span class="sb">`
-</span><span class="sb">        header {
-</span><span class="sb">          position: fixed;
-</span><span class="sb">        }
-</span><span class="sb">        component-toggle-panel div {
-</span><span class="sb">          display: flex;
-</span><span class="sb">          flex-wrap: wrap;
-</span><span class="sb">        }
-</span><span class="sb">        div div {
-</span><span class="sb">          flex: 1;
-</span><span class="sb">        }
-</span><span class="sb">      `</span><span class="p">,</span>
-    <span class="p">],</span>
-  <span class="p">}</span>
-<span class="p">);</span>
-</pre>
+</style><body class="bg">
+<pre tabindex="0" class="chroma"><code><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">css</span><span class="p">,</span> <span class="nx">html</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;lit&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">pureLit</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;pure-lit&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">defineHormone</span><span class="p">,</span> <span class="nx">LOGLEVEL</span><span class="p">,</span> <span class="nx">setLoglevel</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;../src&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">getHashValue</span> <span class="o">=</span> <span class="p">(</span><span class="nx">key</span>: <span class="kt">string</span><span class="p">,</span> <span class="nx">orElse</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="p">{</span> <span class="nx">hash</span> <span class="p">}</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">location</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">length</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">hash</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">orElse</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">values</span> <span class="o">=</span> <span class="nx">hash</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34;&amp;&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">value</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&#34;=&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">.</span><span class="nx">find</span><span class="p">(([</span><span class="nx">actualKey</span><span class="p">])</span> <span class="o">=&gt;</span> <span class="nx">actualKey</span> <span class="o">===</span> <span class="nx">key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">values</span><span class="p">)</span> <span class="k">return</span> <span class="nx">orElse</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="p">[,</span> <span class="nx">value</span><span class="p">]</span> <span class="o">=</span> <span class="nx">values</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">loglevel</span> <span class="o">=</span> <span class="p">()</span><span class="o">:</span> <span class="nx">LOGLEVEL</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">getHashValue</span><span class="p">(</span><span class="s2">&#34;loglevel&#34;</span><span class="p">,</span> <span class="s2">&#34;error&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">switch</span> <span class="p">(</span><span class="nx">value</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s2">&#34;info&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">INFO</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s2">&#34;debug&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">DEBUG</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="s2">&#34;trace&#34;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">TRACE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">LOGLEVEL</span><span class="p">.</span><span class="nx">ERROR</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">setLoglevel</span><span class="p">(</span><span class="nx">loglevel</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./simple&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./twoForms&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./todo&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./search&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./form&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s2">&#34;./spreadsheet&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">activePanel</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">string</span><span class="p">&gt;(</span><span class="s2">&#34;app/panel&#34;</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">defaultValue</span><span class="o">:</span> <span class="s2">&#34;readme&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">activeForm</span> <span class="o">=</span> <span class="nx">defineHormone</span><span class="p">&lt;</span><span class="nt">string</span><span class="p">&gt;(</span><span class="s2">&#34;app/panel/form&#34;</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">defaultValue</span><span class="o">:</span> <span class="s2">&#34;logic&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="k">default</span> <span class="nx">pureLit</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;example-app&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">html</span><span class="sb">`
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;header&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;component-button-list
+</span></span></span><span class="line"><span class="cl"><span class="sb">          .items=</span><span class="si">${</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;readme&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;simple&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;two-receptors&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;todo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;search&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;form&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;spreadsheet&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="p">]</span><span class="si">}</span><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">          .release=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/component-button-list&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/header&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-toggle-panel name=&#34;readme&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;html-view file=&#34;readme&#34;&gt;&lt;/html-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-toggle-panel name=&#34;simple&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          A receptor does not return a global state, but what has been returned.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;simple-app&gt;&lt;/simple-app&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;code-view file=&#34;simple.ts&#34;&gt;&lt;/code-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-toggle-panel name=&#34;two-receptors&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          A receptor does not return a global state, but what has been released
+</span></span></span><span class="line"><span class="cl"><span class="sb">          last. That might be counterintuitive if you compare it to state hooks
+</span></span></span><span class="line"><span class="cl"><span class="sb">          like
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;code&gt;useState&lt;/code&gt;, but the reason is that a receptor really is the
+</span></span></span><span class="line"><span class="cl"><span class="sb">          result of a hormone that was released. If you want to maintain the
+</span></span></span><span class="line"><span class="cl"><span class="sb">          state, you will have to maintain it inside the component.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          A receptor that is explicitly filtered for a released hormone will
+</span></span></span><span class="line"><span class="cl"><span class="sb">          always return undefined. In case you want to maintain your own state
+</span></span></span><span class="line"><span class="cl"><span class="sb">          use this to know when the state changes.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;two-form-app&gt;&lt;/two-form-app&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;code-view file=&#34;twoForms.ts&#34;&gt;&lt;/code-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-toggle-panel name=&#34;todo&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          A simple todo app, that adds new items to a list. Unlike the first
+</span></span></span><span class="line"><span class="cl"><span class="sb">          examples, this one uses a component library that is setup to work out
+</span></span></span><span class="line"><span class="cl"><span class="sb">          of the box with hormones.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;todo-app&gt;&lt;/todo-app&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;code-view file=&#34;todo.ts&#34;&gt;&lt;/code-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-toggle-panel name=&#34;search&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          A search app, that loads a json result, filters it in the frontend and
+</span></span></span><span class="line"><span class="cl"><span class="sb">          displays the result.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          This example is aiming to show how you can completely separate
+</span></span></span><span class="line"><span class="cl"><span class="sb">          specific parts of your logic without any connection to the display or
+</span></span></span><span class="line"><span class="cl"><span class="sb">          the rendering of the application.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;search-app&gt;&lt;/search-app&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;code-view file=&#34;search.ts&#34;&gt;&lt;/code-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-toggle-panel name=&#34;form&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          This example contains form that can be submitted at the end.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;code&gt;Organismus&lt;/code&gt; was not designed to solve forms, however there
+</span></span></span><span class="line"><span class="cl"><span class="sb">          are multiple ways to solve form handling with it. This is one example,
+</span></span></span><span class="line"><span class="cl"><span class="sb">          which is using the hypothalamus for collecting the form data and to
+</span></span></span><span class="line"><span class="cl"><span class="sb">          orchestrate the validation and finally the submit.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;form-app&gt;&lt;/form-app&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;component-button-list
+</span></span></span><span class="line"><span class="cl"><span class="sb">              .items=</span><span class="si">${</span><span class="p">[</span><span class="s2">&#34;logic&#34;</span><span class="p">,</span> <span class="s2">&#34;ui&#34;</span><span class="p">]</span><span class="si">}</span><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">              .release=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;/component-button-list&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;component-toggle-panel name=&#34;logic&#34; .receptor=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">              &lt;code-view file=&#34;form/form.logic.ts&#34;&gt;&lt;/code-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;component-toggle-panel name=&#34;ui&#34; .receptor=</span><span class="si">${</span><span class="nx">activeForm</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">              &lt;code-view file=&#34;form/form.ui.ts&#34;&gt;&lt;/code-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;component-toggle-panel name=&#34;spreadsheet&#34; .receptor=</span><span class="si">${</span><span class="nx">activePanel</span><span class="si">}</span><span class="sb">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          Good results can be achieved with applications that have a lot of
+</span></span></span><span class="line"><span class="cl"><span class="sb">          decoupled elements that might be related. A typical use case is a
+</span></span></span><span class="line"><span class="cl"><span class="sb">          spreadsheet. It&#39;s still limited due to the fact that javascript is 
+</span></span></span><span class="line"><span class="cl"><span class="sb">          a single thread language, yet working nice enough to display its 
+</span></span></span><span class="line"><span class="cl"><span class="sb">          features.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          This spreadsheet shows a multiway communication:
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;ol&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">              Every cell releases a &lt;code&gt;cellChanged&lt;/code&gt; hormone if changed.
+</span></span></span><span class="line"><span class="cl"><span class="sb">              A cell with a formula listens to those events, and if one of the
+</span></span></span><span class="line"><span class="cl"><span class="sb">              referenced cells is changed, it updates itself
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">              Every cell with a formula releases a
+</span></span></span><span class="line"><span class="cl"><span class="sb">              &lt;code&gt;cellRequest&lt;/code&gt; hormone for all cells with values it
+</span></span></span><span class="line"><span class="cl"><span class="sb">              needs, triggering a &lt;code&gt;cellChanged&lt;/code&gt; event for the
+</span></span></span><span class="line"><span class="cl"><span class="sb">              affected cells, and read from 1.
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">              Every cell listens to a &lt;code&gt;cellSet&lt;/code&gt; event, which allows
+</span></span></span><span class="line"><span class="cl"><span class="sb">              setting events from the outside (by clicking the init button)
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;/li&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/ol&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          This is a very simple implementation, and formula&#39;s (which start with
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;code&gt;=&lt;/code&gt;) only support selecting single columns (no numerics or
+</span></span></span><span class="line"><span class="cl"><span class="sb">          ranges) and &lt;code&gt;+&lt;/code&gt; &amp; &lt;code&gt;-&lt;/code&gt; operators (ie
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;code&gt;=A1+A2&lt;/code&gt;).
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          In this example, field &lt;code&gt;C4&lt;/code&gt; is using a few hundred
+</span></span></span><span class="line"><span class="cl"><span class="sb">          fields (all values in &lt;code&gt;A&lt;/code&gt;, and &lt;code&gt;E&lt;/code&gt; to
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;code&gt;Z&lt;/code&gt;, plus the ones in &lt;code&gt;B0&lt;/code&gt;, &lt;code&gt;B1&lt;/code&gt; and
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;code&gt;C0&lt;/code&gt;), and the field &lt;code&gt;D4&lt;/code&gt; is using &lt;code&gt;C4&lt;/code&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          and &lt;code&gt;C0&lt;/code&gt;. Change the fields to see how the calculated fields
+</span></span></span><span class="line"><span class="cl"><span class="sb">          are recalculated, and reset the counter to see how few cells needs 
+</span></span></span><span class="line"><span class="cl"><span class="sb">          updating on every change.
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/blockquote&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;spreadsheet-app&gt;&lt;/spreadsheet-app&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">            &lt;code-view file=&#34;spreadsheet.ts&#34;&gt;&lt;/code-view&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        &lt;/div&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">      &lt;/component-toggle-panel&gt;
+</span></span></span><span class="line"><span class="cl"><span class="sb">    `</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">styles</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">css</span><span class="sb">`
+</span></span></span><span class="line"><span class="cl"><span class="sb">        header {
+</span></span></span><span class="line"><span class="cl"><span class="sb">          position: fixed;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        }
+</span></span></span><span class="line"><span class="cl"><span class="sb">        component-toggle-panel div {
+</span></span></span><span class="line"><span class="cl"><span class="sb">          display: flex;
+</span></span></span><span class="line"><span class="cl"><span class="sb">          flex-wrap: wrap;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        }
+</span></span></span><span class="line"><span class="cl"><span class="sb">        div div {
+</span></span></span><span class="line"><span class="cl"><span class="sb">          flex: 1;
+</span></span></span><span class="line"><span class="cl"><span class="sb">        }
+</span></span></span><span class="line"><span class="cl"><span class="sb">      `</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">);</span>
+</span></span></code></pre>
 </body>
 </html>

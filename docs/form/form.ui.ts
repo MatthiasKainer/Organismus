@@ -1,4 +1,4 @@
-import { css, html, LitElement, TemplateResult } from "lit-element";
+import { css, html, LitElement, TemplateResult } from "lit";
 import { useState } from "lit-element-state-decoupler";
 import { LitElementWithProps, pureLit } from "pure-lit";
 import {
@@ -44,7 +44,8 @@ pureLit(
     defaults: {
       name: "",
       form: "",
-      label: undefined,
+      label: "",
+      rules: [],
       placeholder: "Insert value",
     },
   }

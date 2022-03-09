@@ -1,5 +1,5 @@
 import { pureLit } from "pure-lit";
-import { html } from "lit-element";
+import { html } from "lit";
 
 import "./components";
 
